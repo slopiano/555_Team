@@ -22,7 +22,7 @@ month_dict = {
     }
 
 f=open('export-BloodTree.ged')
-
+'TR_Family_Tree.ged'
 line=f.readlines()
 
 #Holds all the info a person should have
@@ -53,7 +53,7 @@ class Family:
 # This is the starter of the program, it reads the entire file and adds it to the
 # Inidiviuals dictionary and Families dictionary
 def parse():
-    f = open('export-BloodTree.ged')
+    f = open('TR_Family_Tree.ged')
     lines = f.readlines()
     idx = 0
     while(idx < len(lines)):
@@ -86,9 +86,10 @@ def parse():
 # then it adds the Person to the Individuals dictionary
 def readIndividual(idx, lines):
     line = lines[idx]
+    tags = line.split()
     temp_name = 'N/A'
     temp_age = 'N/A'
-    temp_id = line[2:len(line)-6]
+    temp_id = tags[1]
     temp_gender = 'N/A'
     temp_birthday = 'N/A'
     temp_alive = True
@@ -99,23 +100,26 @@ def readIndividual(idx, lines):
     line = lines[idx]
     while(idx < len(lines) and line[0] != '0'):
         line = lines[idx]
-        if(len(line) > 6 and line[2:6] == 'NAME'):
-            temp_name = line[7:len(line)]
-        if(len(line) > 5 and line[2:5] == 'SEX'):
-            temp_gender = line[6:7]
-        if(len(line) > 6 and line[2:6] == 'BIRT'):
+        tags = line.split()
+        if(tags[1] == 'NAME'):
+            temp_name = tags[2] + " " + tags[3]
+        if(tags[1] == 'SEX'):
+            temp_gender = tags[2]
+        if(tags[1] == 'BIRT'):
             idx+=1
             line = lines[idx]
-            if(len(line) > 6 and line[2:6] == 'DATE'):
-                temp_birthday = line[7:len(line)]
+            tags = line.split()
+            if(tags[1] == 'DATE'):
+                temp_birthday = tags[2] + ' ' + tags[3] + ' ' + tags[4]
             else:
                 idx-=1
-        if(len(line) > 6 and line[2:6] == 'DEAT'):
+        if(tags[1] == 'DEAT'):
             temp_alive = False
             idx+=1
             line = lines[idx]
-            if(len(line) > 6 and line[2:6] == 'DATE'):
-                temp_death = line[7:len(line)]
+            tags = line.split()
+            if(tags[1] == 'DATE'):
+                temp_death = tags[2] + ' ' + tags[3] + ' ' + tags[4]
             else:
                 idx-=1
         idx+=1
@@ -129,7 +133,8 @@ def readIndividual(idx, lines):
 # then it adds the family to the Families dictionary
 def readFamily(idx, lines):
     line = lines[idx]
-    temp_id = line[2:len(line)-5]
+    tags = line.split()
+    temp_id = tags[1]
     temp_married = 'N/A'
     temp_divorced = 'N/A'
     temp_husband_id = 'N/A'
