@@ -10,6 +10,9 @@ Individuals = {}
 # FORMAT: {'Family ID' : Family object }
 Families = {}
 
+# Holds all the errors
+errors = []
+
 # Maps the month date with a number for date comparisons
 month_dict = {
         'JAN' : 1,
