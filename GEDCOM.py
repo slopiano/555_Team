@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 from collections import OrderedDict
 from prettytable import PrettyTable
 
@@ -12,6 +12,9 @@ Families = {}
 
 # Holds all the errors
 errors = []
+
+# Holds all the ppl who died in the last 30 days
+died30DaysAgo = []
 
 # Maps the month date with a number for date comparisons
 month_dict = {
@@ -129,6 +132,11 @@ def readIndividual(idx, lines):
     temp_age = calculate_age(temp_birthday, temp_death)
     indi = Person(temp_id, temp_name, temp_age, temp_gender, temp_birthday, temp_alive, temp_death, temp_child, temp_spouse)
     Individuals[temp_id] = indi
+    
+    '''Checks if they died in the past 30 days'''
+    if(temp_alive == False):
+        diedPast30Days(temp_death, temp_name)
+    
     return idx-1
 
 # this function reads in all of the families data and adds them to the Family class,
@@ -223,6 +231,34 @@ def showData():
     print("Families")
     print(y)
 
+def diedPast30Days(death, name):
+    '''Gets the date 30 days before today'''
+    day_before = (date.today()-timedelta(days=30))
+    curr_day = int(day_before.strftime("%d"))
+    curr_month = int(day_before.strftime("%m"))
+    curr_year = int(day_before.strftime("%Y"))
+
+    '''Gets the death date'''
+    death_list = death.split()
+    ind_day = int(death_list[0])
+    ind_month = month_dict[death_list[1]]
+    ind_year = int(death_list[2])
+
+    if(curr_year < ind_year):
+        died30DaysAgo.append(name)
+    elif(curr_year == ind_year and curr_month < ind_month):
+        died30DaysAgo.append(name)
+    elif(curr_year == ind_year and curr_month == ind_month and curr_day < ind_day):
+        died30DaysAgo.append(name)
+
+def showDied30DaysAgo():
+    print('\nPeople who died in the past 30 days:')
+    for person in died30DaysAgo:
+        print(person)
+
+    
+
 #Driver code
 parse('TR_Family_Tree.ged')
 showData()
+showDied30DaysAgo()
