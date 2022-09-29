@@ -223,6 +223,18 @@ def showData():
     print("Families")
     print(y)
 
+def checkSpouseAndMarriageDate():
+    spouseMarriageSet = {}
+    for fam in Families.values():
+        sm = fam.married + fam.husband_name + fam.wife_name
+        if sm in spouseMarriageSet:
+            print(fam.id + ' is being deleted as they have the same wife name, husband name, and mariage date')
+            del Families[fam.id]
+        else:
+            spouseMarriageSet.add(sm)
+            
+
 #Driver code
 parse('TR_Family_Tree.ged')
+checkSpouseAndMarriageDate()
 showData()
