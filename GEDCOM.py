@@ -1,6 +1,9 @@
 from datetime import date
 from collections import OrderedDict
 from prettytable import PrettyTable
+from Person import Person
+from Family import Family
+from constants import month_dict, FAMILY_COLUMNS, INDIVIDUAL_COLUMNS
 
 # Dictionary that holds all of the individuals values.
 # FORMAT: {'Individual ID' : Person object }
@@ -12,47 +15,6 @@ Families = {}
 
 # Holds all the errors
 errors = []
-
-# Maps the month date with a number for date comparisons
-month_dict = {
-        'JAN' : 1,
-        'FEB' : 2,
-        'MAR' : 3,
-        'APR' : 4,
-        'MAY' : 5,
-        'JUN' : 6,
-        'JUL' : 7,
-        'AUG' : 8,
-        'SEP' : 9,
-        'OCT' : 10,
-        'NOV' : 11,
-        'DEC' : 12
-    }
-
-#Holds all the info a person should have
-class Person:
-    def __init__(self, ID, name, age, gender, birthday, alive, death, children, spouse):
-        self.name = name
-        self.age = age
-        self.id = ID
-        self.gender = gender
-        self.birthday = birthday
-        self.alive = alive
-        self.death = death
-        self.children = children
-        self.spouse = spouse
-
-#Holds all the info a family should have
-class Family:
-    def __init__(self, ID, married, divorced, husband_id, husband_name, wife_id, wife_name, children):
-        self.id = ID
-        self.married = married
-        self.divorced = divorced
-        self.husband_id = husband_id
-        self.husand_name = husband_name
-        self.wife_id = wife_id
-        self.wife_name = wife_name
-        self.children = children
 
 # This is the starter of the program, it reads the entire file and adds it to the
 # Inidiviuals dictionary and Families dictionary
@@ -203,15 +165,28 @@ def calculate_age(birthday, death):
     if(curr_month == ind_month and curr_day < ind_day):
         age-=1
     return age
-        
+
+def listAllLivingMarried():
+    print('\n List all Living and Married Individuals')
+    indi_list = []
+    table = PrettyTable(INDIVIDUAL_COLUMNS)
+    for fam in Families.values():
+        if(Individuals[fam.husband_id].alive and Individuals[fam.wife_id].alive and fam.married !='N/A' ):
+            indi_list.append(Individuals[fam.husband_id].id)
+            indi_list.append(Individuals[fam.wife_id].id)
+
+    for indi in list(set(indi_list)):
+        person = Individuals[indi]
+        table.add_row([person.id, person.name, person.gender, person.birthday, person.age, person.alive, person.death, person.children, person.spouse])
+
+    print(table)
+
 #Shows the data in a pretty table of the individuals and the families
 def showData():
     ordered_ind = OrderedDict(sorted(Individuals.items()))
     ordered_fam = OrderedDict(sorted(Families.items()))
-    x = PrettyTable()
-    y = PrettyTable()
-    x.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"]
-    y.field_names = ["ID", "Married", "Divorced", "Huasband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]
+    x = PrettyTable(INDIVIDUAL_COLUMNS)
+    y = PrettyTable(FAMILY_COLUMNS)
     for ind in ordered_ind.values():
         x.add_row([ind.id, ind.name, ind.gender, ind.birthday, ind.age, ind.alive, ind.death, ind.children, ind.spouse])
     for fam in ordered_fam.values():
@@ -226,3 +201,4 @@ def showData():
 #Driver code
 parse('TR_Family_Tree.ged')
 showData()
+listAllLivingMarried()
