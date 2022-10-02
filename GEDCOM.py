@@ -102,7 +102,7 @@ def readIndividual(idx, lines):
     
     '''Checks if they died in the past 30 days'''
     if(temp_alive == False):
-        diedPast30Days(temp_death, temp_name)
+        diedPast30Days(temp_death, indi)
     
     return idx-1
 
@@ -226,7 +226,7 @@ def showData():
     print(y)
 
 def checkSpouseAndMarriageDate():
-    spouseMarriageSet = {}
+    spouseMarriageSet = set()
     for fam in Families.values():
         sm = fam.married + fam.husband_name + fam.wife_name
         if sm in spouseMarriageSet:
@@ -237,11 +237,14 @@ def checkSpouseAndMarriageDate():
 
 def neverMarriedOver30():
     print('\nIndividuals over 30 who have never been married:')
-    for ind in Individuals.values():
-        if(ind.age > 30 and ind.spouse == 'N/A'):
-            print(ind.name)
+    table = PrettyTable(INDIVIDUAL_COLUMNS)
+    for person in Individuals.values():
+        if(person.age > 30 and person.spouse == 'N/A'):
+            table.add_row([person.id, person.name, person.gender, person.birthday, person.age, person.alive, person.death, person.children, person.spouse])
+    print(table)
+    print(f'{len(table.rows)} Recent births')
 
-def diedPast30Days(death, name):
+def diedPast30Days(death, indi):
     '''Gets the date 30 days before today'''
     day_before = (date.today()-timedelta(days=30))
     curr_day = int(day_before.strftime("%d"))
@@ -255,16 +258,19 @@ def diedPast30Days(death, name):
     ind_year = int(death_list[2])
 
     if(curr_year < ind_year):
-        died30DaysAgo.append(name)
+        died30DaysAgo.append(indi)
     elif(curr_year == ind_year and curr_month < ind_month):
-        died30DaysAgo.append(name)
+        died30DaysAgo.append(indi)
     elif(curr_year == ind_year and curr_month == ind_month and curr_day < ind_day):
-        died30DaysAgo.append(name)
+        died30DaysAgo.append(indi)
 
 def showDied30DaysAgo():
     print('\nPeople who died in the past 30 days:')
+    table = PrettyTable(INDIVIDUAL_COLUMNS)
     for person in died30DaysAgo:
-        print(person)
+        table.add_row([person.id, person.name, person.gender, person.birthday, person.age, person.alive, person.death, person.children, person.spouse])
+    print(table)
+    print(f'{len(died30DaysAgo)} recent deaths')
 
 def listLessThanOneIndWithSameBDayAndName(individuals):
     myDict = {}
@@ -289,7 +295,7 @@ def calculateErrors():
 
 #Driver code
 parse('TR_Family_Tree.ged')
-# checkSpouseAndMarriageDate()
+checkSpouseAndMarriageDate()
 showData()
 listData()
 calculateErrors()
