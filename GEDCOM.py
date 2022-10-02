@@ -4,6 +4,8 @@ from prettytable import PrettyTable
 from Person import Person
 from Family import Family
 from constants import month_dict, FAMILY_COLUMNS, INDIVIDUAL_COLUMNS
+from utils import diff_month
+from datetime import datetime
 
 # Dictionary that holds all of the individuals values.
 # FORMAT: {'Individual ID' : Person object }
@@ -15,6 +17,8 @@ Families = {}
 
 # Holds all the errors
 errors = []
+
+died30DaysAgo=[]
 
 # This is the starter of the program, it reads the entire file and adds it to the
 # Inidiviuals dictionary and Families dictionary
@@ -175,8 +179,8 @@ def calculate_age(birthday, death):
         age-=1
     return age
 
-def listAllLivingMarried():
-    print('\n List all Living and Married Individuals')
+def listLivingMarried():
+    print('\n Living and Married Individuals')
     indi_list = []
     table = PrettyTable(INDIVIDUAL_COLUMNS)
     for fam in Families.values():
@@ -189,6 +193,20 @@ def listAllLivingMarried():
         table.add_row([person.id, person.name, person.gender, person.birthday, person.age, person.alive, person.death, person.children, person.spouse])
 
     print(table)
+
+def listRecentBirths():
+    print('\n Recent births')
+    table = PrettyTable(INDIVIDUAL_COLUMNS)
+    for person in Individuals.values():
+       day, month, year = person.birthday.split()
+       d1 = datetime.today()
+       d2 = datetime(int(year), month_dict[month], int(day))
+       if(diff_month(d1, d2) <= 1 ): 
+         table.add_row([person.id, person.name, person.gender, person.birthday, person.age, person.alive, person.death, person.children, person.spouse])
+       len(table.rows)
+    print(table)
+    print(len(table.rows), "Recent births")
+
 
 #Shows the data in a pretty table of the individuals and the families
 def showData():
@@ -250,7 +268,9 @@ def showDied30DaysAgo():
 
 #Driver code
 parse('TR_Family_Tree.ged')
-checkSpouseAndMarriageDate()
+# checkSpouseAndMarriageDate()
 showData()
+listLivingMarried()
 neverMarriedOver30()
 showDied30DaysAgo()
+listRecentBirths()
