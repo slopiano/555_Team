@@ -35,10 +35,14 @@ def parse(fileName):
     #Fills in missing info for the Person and Family class
     for fam in Families.values():
         'Adding to the husband'
+        if(Individuals[fam.husband_id].gender == 'F'):
+            errors.append('Husband: ' + fam.husband_id + ' cannot be Female')
         Individuals[fam.husband_id].children = fam.children
         Individuals[fam.husband_id].spouse = fam.wife_id
 
         'Adding to the wife'
+        if(Individuals[fam.wife_id].gender == 'M'):
+            errors.append('Wife: ' + fam.husband_id + ' cannot be Male')
         Individuals[fam.wife_id].children = fam.children
         Individuals[fam.wife_id].spouse = fam.husband_id
 
