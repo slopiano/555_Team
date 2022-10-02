@@ -266,11 +266,30 @@ def showDied30DaysAgo():
     for person in died30DaysAgo:
         print(person)
 
+def listLessThanOneIndWithSameBDayAndName(individuals):
+    myDict = {}
+    for indi in individuals.values():
+        if(bool(myDict.get(indi.name))):
+            if(myDict[indi.name] == indi.birthday): 
+                print("\n Error: More than one individual found with same name and birthday")
+                return 1
+        else: 
+            myDict[indi.name] = indi.birthday
+    print("\n No individual found with same name and birthday")
+    return 0
+
+def listData():
+    listLivingMarried()
+    neverMarriedOver30()
+    showDied30DaysAgo()
+    listRecentBirths()
+
+def calculateErrors():
+    listLessThanOneIndWithSameBDayAndName(Individuals)
+
 #Driver code
 parse('TR_Family_Tree.ged')
 # checkSpouseAndMarriageDate()
 showData()
-listLivingMarried()
-neverMarriedOver30()
-showDied30DaysAgo()
-listRecentBirths()
+listData()
+calculateErrors()
