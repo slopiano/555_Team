@@ -16,7 +16,6 @@ Families = {}
 # Holds all the errors
 errors = []
 
-
 # This is the starter of the program, it reads the entire file and adds it to the
 # Inidiviuals dictionary and Families dictionary
 def parse(fileName):
@@ -204,6 +203,16 @@ def showData():
     print("Families")
     print(y)
 
+def checkSpouseAndMarriageDate():
+    spouseMarriageSet = {}
+    for fam in Families.values():
+        sm = fam.married + fam.husband_name + fam.wife_name
+        if sm in spouseMarriageSet:
+            print(fam.id + ' is being deleted as they have the same wife name, husband name, and mariage date')
+            del Families[fam.id]
+        else:
+            spouseMarriageSet.add(sm)
+
 def neverMarriedOver30():
     print('\nIndividuals over 30 who have never been married:')
     for ind in Individuals.values():
@@ -237,6 +246,7 @@ def showDied30DaysAgo():
 
 #Driver code
 parse('TR_Family_Tree.ged')
+checkSpouseAndMarriageDate()
 showData()
 neverMarriedOver30()
 showDied30DaysAgo()
