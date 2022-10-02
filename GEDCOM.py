@@ -53,14 +53,14 @@ def readIndividual(idx, lines):
     line = lines[idx]
     tags = line.split()
     temp_name = 'N/A'
-    temp_age = 'N/A'
+    temp_age = 0
     temp_id = tags[1]
     temp_gender = 'N/A'
     temp_birthday = 'N/A'
     temp_alive = True
     temp_death = 'N/A'
     temp_child = []
-    temp_spouse = []
+    temp_spouse = 'N/A'
     idx+=1
     line = lines[idx]
     while(idx < len(lines) and line[0] != '0'):
@@ -204,6 +204,12 @@ def showData():
     print("Families")
     print(y)
 
+def neverMarriedOver30():
+    print('\nIndividuals over 30 who have never been married:')
+    for ind in Individuals.values():
+        if(ind.age > 30 and ind.spouse == 'N/A'):
+            print(ind.name)
+
 def diedPast30Days(death, name):
     '''Gets the date 30 days before today'''
     day_before = (date.today()-timedelta(days=30))
@@ -229,9 +235,8 @@ def showDied30DaysAgo():
     for person in died30DaysAgo:
         print(person)
 
-    
-
 #Driver code
 parse('TR_Family_Tree.ged')
 showData()
+neverMarriedOver30()
 showDied30DaysAgo()
