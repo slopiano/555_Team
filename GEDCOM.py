@@ -1,6 +1,9 @@
-from datetime import date
+from datetime import date, timedelta
 from collections import OrderedDict
 from prettytable import PrettyTable
+from Person import Person
+from Family import Family
+from constants import month_dict, FAMILY_COLUMNS, INDIVIDUAL_COLUMNS
 
 # Dictionary that holds all of the individuals values.
 # FORMAT: {'Individual ID' : Person object }
@@ -10,49 +13,8 @@ Individuals = {}
 # FORMAT: {'Family ID' : Family object }
 Families = {}
 
-#Holds all the errors
+# Holds all the errors
 errors = []
-
-# Maps the month date with a number for date comparisons
-month_dict = {
-        'JAN' : 1,
-        'FEB' : 2,
-        'MAR' : 3,
-        'APR' : 4,
-        'MAY' : 5,
-        'JUN' : 6,
-        'JUL' : 7,
-        'AUG' : 8,
-        'SEP' : 9,
-        'OCT' : 10,
-        'NOV' : 11,
-        'DEC' : 12
-    }
-
-#Holds all the info a person should have
-class Person:
-    def __init__(self, ID, name, age, gender, birthday, alive, death, children, spouse):
-        self.name = name
-        self.age = age
-        self.id = ID
-        self.gender = gender
-        self.birthday = birthday
-        self.alive = alive
-        self.death = death
-        self.children = children
-        self.spouse = spouse
-
-#Holds all the info a family should have
-class Family:
-    def __init__(self, ID, married, divorced, husband_id, husband_name, wife_id, wife_name, children):
-        self.id = ID
-        self.married = married
-        self.divorced = divorced
-        self.husband_id = husband_id
-        self.husand_name = husband_name
-        self.wife_id = wife_id
-        self.wife_name = wife_name
-        self.children = children
 
 # This is the starter of the program, it reads the entire file and adds it to the
 # Inidiviuals dictionary and Families dictionary
@@ -94,14 +56,14 @@ def readIndividual(idx, lines):
     line = lines[idx]
     tags = line.split()
     temp_name = 'N/A'
-    temp_age = 'N/A'
+    temp_age = 0
     temp_id = tags[1]
     temp_gender = 'N/A'
     temp_birthday = 'N/A'
     temp_alive = True
     temp_death = 'N/A'
     temp_child = []
-    temp_spouse = []
+    temp_spouse = 'N/A'
     idx+=1
     line = lines[idx]
     while(idx < len(lines) and line[0] != '0'):
@@ -133,6 +95,11 @@ def readIndividual(idx, lines):
     temp_age = calculate_age(temp_birthday, temp_death)
     indi = Person(temp_id, temp_name, temp_age, temp_gender, temp_birthday, temp_alive, temp_death, temp_child, temp_spouse)
     Individuals[temp_id] = indi
+    
+    '''Checks if they died in the past 30 days'''
+    if(temp_alive == False):
+        diedPast30Days(temp_death, temp_name)
+    
     return idx-1
 
 # this function reads in all of the families data and adds them to the Family class,
@@ -207,15 +174,28 @@ def calculate_age(birthday, death):
     if(curr_month == ind_month and curr_day < ind_day):
         age-=1
     return age
-        
+
+def listAllLivingMarried():
+    print('\n List all Living and Married Individuals')
+    indi_list = []
+    table = PrettyTable(INDIVIDUAL_COLUMNS)
+    for fam in Families.values():
+        if(Individuals[fam.husband_id].alive and Individuals[fam.wife_id].alive and fam.married !='N/A' ):
+            indi_list.append(Individuals[fam.husband_id].id)
+            indi_list.append(Individuals[fam.wife_id].id)
+
+    for indi in list(set(indi_list)):
+        person = Individuals[indi]
+        table.add_row([person.id, person.name, person.gender, person.birthday, person.age, person.alive, person.death, person.children, person.spouse])
+
+    print(table)
+
 #Shows the data in a pretty table of the individuals and the families
 def showData():
     ordered_ind = OrderedDict(sorted(Individuals.items()))
     ordered_fam = OrderedDict(sorted(Families.items()))
-    x = PrettyTable()
-    y = PrettyTable()
-    x.field_names = ["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"]
-    y.field_names = ["ID", "Married", "Divorced", "Huasband ID", "Husband Name", "Wife ID", "Wife Name", "Children"]
+    x = PrettyTable(INDIVIDUAL_COLUMNS)
+    y = PrettyTable(FAMILY_COLUMNS)
     for ind in ordered_ind.values():
         x.add_row([ind.id, ind.name, ind.gender, ind.birthday, ind.age, ind.alive, ind.death, ind.children, ind.spouse])
     for fam in ordered_fam.values():
@@ -227,6 +207,50 @@ def showData():
     print("Families")
     print(y)
 
+def checkSpouseAndMarriageDate():
+    spouseMarriageSet = {}
+    for fam in Families.values():
+        sm = fam.married + fam.husband_name + fam.wife_name
+        if sm in spouseMarriageSet:
+            print(fam.id + ' is being deleted as they have the same wife name, husband name, and mariage date')
+            del Families[fam.id]
+        else:
+            spouseMarriageSet.add(sm)
+
+def neverMarriedOver30():
+    print('\nIndividuals over 30 who have never been married:')
+    for ind in Individuals.values():
+        if(ind.age > 30 and ind.spouse == 'N/A'):
+            print(ind.name)
+
+def diedPast30Days(death, name):
+    '''Gets the date 30 days before today'''
+    day_before = (date.today()-timedelta(days=30))
+    curr_day = int(day_before.strftime("%d"))
+    curr_month = int(day_before.strftime("%m"))
+    curr_year = int(day_before.strftime("%Y"))
+
+    '''Gets the death date'''
+    death_list = death.split()
+    ind_day = int(death_list[0])
+    ind_month = month_dict[death_list[1]]
+    ind_year = int(death_list[2])
+
+    if(curr_year < ind_year):
+        died30DaysAgo.append(name)
+    elif(curr_year == ind_year and curr_month < ind_month):
+        died30DaysAgo.append(name)
+    elif(curr_year == ind_year and curr_month == ind_month and curr_day < ind_day):
+        died30DaysAgo.append(name)
+
+def showDied30DaysAgo():
+    print('\nPeople who died in the past 30 days:')
+    for person in died30DaysAgo:
+        print(person)
+
 #Driver code
 parse('TR_Family_Tree.ged')
+checkSpouseAndMarriageDate()
 showData()
+neverMarriedOver30()
+showDied30DaysAgo()
