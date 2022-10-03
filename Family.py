@@ -1,4 +1,4 @@
-#Holds all the info a family should have
+# Holds all the info a family should have
 class Family:
     def __init__(self, ID, married, divorced, husband_id, husband_name, wife_id, wife_name, children):
         self.id = ID
