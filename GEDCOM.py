@@ -414,6 +414,25 @@ def checkUniqueFamilyNames():
             uniqueNames.clear()
         return False
 
+deceasedList = []        
+
+def listDeceased():
+    for indi in Individuals.values():
+        if indi.death != "N/A":
+            deceasedList.append(indi)
+
+
+def showDeceased():
+    print('\n Deceased Individuals')
+    table = PrettyTable(INDIVIDUAL_COLUMNS)
+    for person in deceasedList:
+        table.add_row([person.id, person.name, person.gender, person.birthday,
+                      person.age, person.alive, person.death, person.children, person.spouse])
+    print(table)
+    print(f'{len(deceasedList)} deaths')
+
+
+
 
 def checkCorrespondingEntries():
     # checks for the corresponding entries in family
@@ -432,6 +451,8 @@ def listData():
     neverMarriedOver30()
     showDied30DaysAgo()
     listRecentBirths()
+    listDeceased()
+    showDeceased()
 
 
 def calculateErrors():
