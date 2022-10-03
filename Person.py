@@ -1,4 +1,4 @@
-#Holds all the info a person should have
+# Holds all the info a person should have
 class Person:
     def __init__(self, ID, name, age, gender, birthday, alive, death, children, spouse):
         self.name = name
