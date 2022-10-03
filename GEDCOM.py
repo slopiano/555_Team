@@ -204,7 +204,12 @@ def listLivingMarried():
         table.add_row([person.id, person.name, person.gender, person.birthday,
                       person.age, person.alive, person.death, person.children, person.spouse])
 
-    print(table)
+    if (len(table.rows)):
+        print(table)
+        return 0
+    else:
+        print('No Individuals found living and married')
+        return 1
 
 
 def listRecentBirths():
@@ -217,9 +222,14 @@ def listRecentBirths():
         if (diff_month(d1, d2) <= 1):
             table.add_row([person.id, person.name, person.gender, person.birthday,
                           person.age, person.alive, person.death, person.children, person.spouse])
-        len(table.rows)
-    print(table)
-    print(len(table.rows), "Recent births")
+
+    if (len(table.rows)):
+        print(table)
+        print(len(table.rows), "Recent births found in 30 days")
+        return 0
+    else:
+        print("No recent births found in the past 30 days")
+        return 1
 
 
 # Shows the data in a pretty table of the individuals and the families
@@ -296,10 +306,10 @@ def showDied30DaysAgo():
     print(f'{len(died30DaysAgo)} recent deaths')
 
 
-def UniqueNameAndBirthdays(individuals):
+def uniqueNameAndBirthdays(individuals):
     myDict = {}
     for indi in individuals.values():
-        if (bool(myDict.get(indi.name))):
+        if (myDict.get(indi.name)):
             if (myDict[indi.name] == indi.birthday):
                 print(
                     "\n Error: More than one individual found with same name and birthday")
@@ -357,10 +367,10 @@ def checkCorrespondingEntries():
     fam = checkCorrespondingFamilyRecords()
     if (indi and fam):
         print('\n Corresponding entries for person(spouse, children) family(spouse, children) exist')
-        return 0
+        return True
 
     print('\n Corresponding entries for person(spouse, children) family(spouse, children) do not exist')
-    return 1
+    return False
 
 
 def listData():
@@ -371,7 +381,7 @@ def listData():
 
 
 def calculateErrors():
-    UniqueNameAndBirthdays(Individuals)
+    uniqueNameAndBirthdays(Individuals)
     checkCorrespondingEntries()
 
 
