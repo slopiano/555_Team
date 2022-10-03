@@ -361,6 +361,34 @@ def checkCorrespondingFamilyRecords():
     return True
 
 
+def checkUniqueIndividualIDs():
+    uniqueIDs = []
+    while True:
+        for person in Individuals.values():
+            if person.id not in uniqueIDs:
+                uniqueIDs.append(person.id)
+            else:
+                print("\n" + person.id + " is not unique")
+                return False    
+        print("\n All indivuals IDs are unique")
+        return False
+
+def checkUniqueFamilyIDs():
+    uniqueIDs = []
+    while True:
+        for fam in Families.values():
+            if fam.id not in uniqueIDs:
+                uniqueIDs.append(fam.id)
+            else:
+                print("\n" + fam.id + " is not unique")
+                return False    
+        print("\n All families IDs are unique")
+        return False
+
+
+        
+
+
 def checkCorrespondingEntries():
     # checks for the corresponding entries in family
     indi = checkCorrespondingIndividualRecords()
@@ -391,3 +419,5 @@ showData()
 listData()
 calculateErrors()
 checkSpouseAndMarriageDate()
+checkUniqueIndividualIDs()
+checkUniqueFamilyIDs()
