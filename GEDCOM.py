@@ -386,7 +386,33 @@ def checkUniqueFamilyIDs():
         return False
 
 
-        
+def checkUniqueFamilyNames():
+    while True:
+        uniqueNames = []
+        for fam in Families.values():
+            husbandName = fam.husband_name.split(" ")
+            wifeName = fam.wife_name.split(" ")
+            if husbandName[0] == wifeName[0]:
+                print("Cannot have to people in the same family with the same first name")
+                return False
+            else:
+                uniqueNames.append(husbandName[0])
+                uniqueNames.append(wifeName[0])
+
+            children = fam.children
+      
+            for child in children:
+                childName = Individuals.get(child).name
+                firstName = childName.split(" ")
+                if firstName[0] not in uniqueNames:
+                   uniqueNames.append(firstName[0])
+                else:
+                    print(f"Cannot have same name, {firstName[0]}")
+                    return False
+            print("\n All names in family {} are unique".format(fam.id))
+            print(uniqueNames)
+            uniqueNames.clear()
+        return False
 
 
 def checkCorrespondingEntries():
@@ -414,10 +440,11 @@ def calculateErrors():
 
 
 # Driver code
-parse('TR_Family_Tree.ged')
+parse('My-Family-TR.ged')
 showData()
 listData()
 calculateErrors()
 checkSpouseAndMarriageDate()
 checkUniqueIndividualIDs()
 checkUniqueFamilyIDs()
+checkUniqueFamilyNames()
