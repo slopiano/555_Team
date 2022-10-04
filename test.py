@@ -1,5 +1,5 @@
 import unittest
-from GEDCOM import uniqueNameAndBirthdays, checkCorrespondingEntries, listLivingMarried, listRecentBirths
+from GEDCOM import uniqueNameAndBirthdays, checkCorrespondingEntries, listLivingMarried, listRecentBirths, calculate_age
 
 from Person import Person
 
@@ -30,6 +30,13 @@ class TestForErrors(unittest.TestCase):
 
     def test_list_recent_births(self):
         self.assertEqual(listRecentBirths(), 1)
+
+    def test_calculate_age(self):
+        self.assertEqual(calculate_age('12 NOV 1972', '2 JUL 2006'), 33)
+        self.assertEqual(calculate_age('16 AUG 2001', 'N/A'), 21)
+        self.assertEqual(calculate_age('21 JUL 1975', 'N/A'), 47)
+        self.assertEqual(calculate_age('15 DEC 1929', '29 JAN 2010'), 80)
+        self.assertEqual(calculate_age('23 JUL 2008', 'N/A'), 14)
 
 
 if __name__ == '__main__':
