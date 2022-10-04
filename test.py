@@ -1,5 +1,14 @@
 import unittest
-from GEDCOM import uniqueNameAndBirthdays, checkCorrespondingEntries, listLivingMarried, listRecentBirths, calculate_age
+from GEDCOM import (checkUniqueIndividualIDs, listDeceased, uniqueNameAndBirthdays,
+checkCorrespondingEntries,
+listLivingMarried,
+listRecentBirths,
+calculate_age, 
+checkUniqueFamilyIDs,
+checkUniqueFamilyNames,
+listDeceased,
+listMulitpleBirths)
+
 
 from Person import Person
 
@@ -37,6 +46,22 @@ class TestForErrors(unittest.TestCase):
         self.assertEqual(calculate_age('21 JUL 1975', 'N/A'), 47)
         self.assertEqual(calculate_age('15 DEC 1929', '29 JAN 2010'), 80)
         self.assertEqual(calculate_age('23 JUL 2008', 'N/A'), 14)
+
+    def test_checkUniqueIndivIDs(self):
+        dummy_data = {
+            "1": Person("1", "ASD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
+            "2": Person("1", "BSD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
+        }
+        self.assertFalse(checkUniqueIndividualIDs())
+    
+    def test_checkUniqueFamilyIDs(self):
+        dummy_data = {
+            "1": Person("1", "ASD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
+            "2": Person("1", "BSD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
+        }
+        self.assertFalse(checkUniqueFamilyIDs())
+
+
 
 
 if __name__ == '__main__':

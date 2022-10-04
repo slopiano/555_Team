@@ -383,7 +383,7 @@ def checkUniqueFamilyIDs():
                 print("\n" + fam.id + " is not unique")
                 return False    
         print("\n All families IDs are unique")
-        return False
+        break
 
 
 def checkUniqueFamilyNames():
@@ -412,7 +412,7 @@ def checkUniqueFamilyNames():
             print("\n All names in family {} are unique".format(fam.id))
             print(uniqueNames)
             uniqueNames.clear()
-        return False
+        break
 
 deceasedList = []        
 
@@ -420,6 +420,7 @@ def listDeceased():
     for indi in Individuals.values():
         if indi.death != "N/A":
             deceasedList.append(indi)
+    showDeceased()
 
 
 def showDeceased():
@@ -449,10 +450,6 @@ def listMulitpleBirths():
         print("\n No multiple births")
 
 
-
-
-
-
 def checkCorrespondingEntries():
     # checks for the corresponding entries in family
     indi = checkCorrespondingIndividualRecords()
@@ -471,7 +468,6 @@ def listData():
     showDied30DaysAgo()
     listRecentBirths()
     listDeceased()
-    showDeceased()
 
 
 def calculateErrors():
