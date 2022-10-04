@@ -312,6 +312,10 @@ def showDied30DaysAgo():
 
 
 def uniqueNameAndBirthdays(individuals):
+    if (not (len(individuals))):
+        print("No Individuals found")
+        return 1
+
     myDict = {}
     for indi in individuals.values():
         if (myDict.get(indi.name)):
