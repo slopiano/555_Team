@@ -432,6 +432,25 @@ def showDeceased():
     print(f'{len(deceasedList)} deaths')
 
 
+def listMulitpleBirths():
+    for fam in Families.values():
+        multipleBirths = []
+        lets = []
+        for children in fam.children:
+            child = Individuals.get(children)
+            if child.birthday not in multipleBirths:
+                multipleBirths.append(child.birthday)
+            elif child.birthday in multipleBirths:
+                print((len(lets) +1) + "Births on {}".format(child.birthday))
+                multipleBirths.append(child.birthday)
+                lets.append(child.birthday)
+          
+    if len(lets) == 0:
+        print("\n No multiple births")
+
+
+
+
 
 
 def checkCorrespondingEntries():
@@ -469,3 +488,4 @@ checkSpouseAndMarriageDate()
 checkUniqueIndividualIDs()
 checkUniqueFamilyIDs()
 checkUniqueFamilyNames()
+listMulitpleBirths()
