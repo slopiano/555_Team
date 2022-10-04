@@ -1,4 +1,5 @@
 import unittest
+
 from GEDCOM import (checkUniqueIndividualIDs, listDeceased, uniqueNameAndBirthdays,
 checkCorrespondingEntries,
 listLivingMarried,
@@ -9,13 +10,22 @@ checkUniqueFamilyNames,
 listDeceased,
 listMulitpleBirths)
 
+from GEDCOM import uniqueNameAndBirthdays, checkCorrespondingEntries, listLivingMarried, listRecentBirths, calculate_age, showDied30DaysAgo, neverMarriedOver30, checkSpouseAndMarriageDate
+
 
 from Person import Person
 
 
 class TestForErrors(unittest.TestCase):
 
-    def test_listLessThanOneIndWithSameBDayAndName_error_path(self):
+    def test_listLessThanOneIndWithSameBDayAndName_0(self):
+        # test with empty data
+        dummy_data = {}
+        res = uniqueNameAndBirthdays(dummy_data)
+        self.assertEqual(res, 1)
+
+    def test_listLessThanOneIndWithSameBDayAndName_1(self):
+        # test with same names and same birthdays
         dummy_data = {
             "1": Person("1", "ASD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
             "2": Person("1", "ASD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
@@ -23,10 +33,29 @@ class TestForErrors(unittest.TestCase):
         res = uniqueNameAndBirthdays(dummy_data)
         self.assertEqual(res, 1)
 
-    def test_listLessThanOneIndWithSameBDayAndName_happy_path(self):
+    def test_listLessThanOneIndWithSameBDayAndName_2(self):
+        # test with different names and same birthdays
         dummy_data = {
             "1": Person("1", "ASD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
             "2": Person("1", "BSD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
+        }
+        res = uniqueNameAndBirthdays(dummy_data)
+        self.assertEqual(res, 0)
+
+    def test_listLessThanOneIndWithSameBDayAndName_3(self):
+        # test with different names and different birthdays
+        dummy_data = {
+            "1": Person("1", "ASD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
+            "2": Person("1", "BSD", 22, "M", "01-FEB-2001", True, "N\A", "N\A", "N\A"),
+        }
+        res = uniqueNameAndBirthdays(dummy_data)
+        self.assertEqual(res, 0)
+
+    def test_listLessThanOneIndWithSameBDayAndName_4(self):
+        # test with same names and different birthdays
+        dummy_data = {
+            "1": Person("1", "ASD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
+            "2": Person("1", "ASD", 22, "M", "01-FEB-2001", True, "N\A", "N\A", "N\A"),
         }
         res = uniqueNameAndBirthdays(dummy_data)
         self.assertEqual(res, 0)
@@ -61,8 +90,14 @@ class TestForErrors(unittest.TestCase):
         }
         self.assertFalse(checkUniqueFamilyIDs())
 
+    def test_showDied30DaysAgo(self):
+        self.assertEqual(showDied30DaysAgo(), 0)
 
+    def test_neverMarriedOver30(self):
+        self.assertEqual(neverMarriedOver30(), 0)
 
+    def test_checkSpouseAndMarriageDate(self):
+        self.assertEqual(checkSpouseAndMarriageDate(), 0)
 
 if __name__ == '__main__':
     unittest.main()

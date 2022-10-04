@@ -254,14 +254,17 @@ def showData():
 
 def checkSpouseAndMarriageDate():
     spouseMarriageSet = set()
+    count = 0
     for fam in Families.values():
         sm = fam.married + fam.husband_name + fam.wife_name
         if sm in spouseMarriageSet:
             print(
                 fam.id + ' is being deleted as they have the same wife name, husband name, and mariage date')
             del Families[fam.id]
+            count+=1
         else:
             spouseMarriageSet.add(sm)
+    return count
 
 
 def neverMarriedOver30():
@@ -273,6 +276,7 @@ def neverMarriedOver30():
                           person.age, person.alive, person.death, person.children, person.spouse])
     print(table)
     print(f'{len(table.rows)} individuals over 30 and were never married')
+    return len(table.rows)
 
 
 def diedPast30Days(death, indi):
@@ -304,9 +308,14 @@ def showDied30DaysAgo():
                       person.age, person.alive, person.death, person.children, person.spouse])
     print(table)
     print(f'{len(died30DaysAgo)} recent deaths')
+    return len(died30DaysAgo)
 
 
 def uniqueNameAndBirthdays(individuals):
+    if (not (len(individuals))):
+        print("No Individuals found")
+        return 1
+
     myDict = {}
     for indi in individuals.values():
         if (myDict.get(indi.name)):
