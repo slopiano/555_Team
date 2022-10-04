@@ -308,6 +308,7 @@ def showDied30DaysAgo():
                       person.age, person.alive, person.death, person.children, person.spouse])
     print(table)
     print(f'{len(died30DaysAgo)} recent deaths')
+    return len(died30DaysAgo)
 
 
 def uniqueNameAndBirthdays(individuals):
