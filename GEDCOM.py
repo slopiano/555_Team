@@ -4,7 +4,7 @@ from prettytable import PrettyTable
 from Person import Person
 from Family import Family
 from constants import month_dict, FAMILY_COLUMNS, INDIVIDUAL_COLUMNS
-from utils import diff_month
+from utils import diff_month, parseDate, isDateLess
 from datetime import datetime
 
 # Dictionary that holds all of the individuals values.
@@ -19,6 +19,8 @@ Families = {}
 errors = []
 
 died30DaysAgo = []
+
+deceasedList = []
 
 # This is the starter of the program, it reads the entire file and adds it to the
 # Inidiviuals dictionary and Families dictionary
@@ -212,6 +214,26 @@ def listLivingMarried():
         return 1
 
 
+def birthBeforeMarriage():
+    for fam in Families.values():
+        if(fam.married != "N/A"):
+            marriageDate = parseDate(fam.married)
+            husbandBirthDate = parseDate(Individuals[fam.husband_id].birthday)
+            wifeBirthDate = parseDate(Individuals[fam.wife_id].birthday)
+            if (not (isDateLess(husbandBirthDate, marriageDate) or isDateLess(wifeBirthDate, marriageDate))):
+                print('Error: US02: Birth should occur before marriage of an individual')
+                return 1
+    return 0
+
+def birthBeforeDeath():
+    for dec in deceasedList:
+        birthDate = parseDate(dec.birthday)
+        deathDate = parseDate(dec.death)
+        if(not isDateLess(birthDate, deathDate)):
+            print('Error: US03: Birth should occur before death of an individual')
+            return 1
+    return 0
+
 def listRecentBirths():
     print('\n Recent births')
     table = PrettyTable(INDIVIDUAL_COLUMNS)
@@ -321,7 +343,7 @@ def uniqueNameAndBirthdays(individuals):
         if (myDict.get(indi.name)):
             if (myDict[indi.name] == indi.birthday):
                 print(
-                    "\n Error: More than one individual found with same name and birthday")
+                    "\n Error: US23: More than one individual found with same name and birthday")
                 return 1
         else:
             myDict[indi.name] = indi.birthday
@@ -421,9 +443,7 @@ def checkUniqueFamilyNames():
             print("\n All names in family {} are unique".format(fam.id))
             print(uniqueNames)
             uniqueNames.clear()
-        break
-
-deceasedList = []        
+        break        
 
 def listDeceased():
     for indi in Individuals.values():
@@ -467,7 +487,7 @@ def checkCorrespondingEntries():
         print('\n Corresponding entries for person(spouse, children) family(spouse, children) exist')
         return True
 
-    print('\n Corresponding entries for person(spouse, children) family(spouse, children) do not exist')
+    print('\n Error: US26: Corresponding entries for person(spouse, children) family(spouse, children) do not exist')
     return False
 
 
@@ -482,6 +502,8 @@ def listData():
 def calculateErrors():
     uniqueNameAndBirthdays(Individuals)
     checkCorrespondingEntries()
+    birthBeforeMarriage()
+    birthBeforeDeath()
 
 
 # Driver code
