@@ -1,11 +1,10 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from collections import OrderedDict
 from prettytable import PrettyTable
 from Person import Person
 from Family import Family
 from constants import month_dict, FAMILY_COLUMNS, INDIVIDUAL_COLUMNS
 from utils import diff_month, parseDate, isDateLess
-from datetime import datetime
 
 # Dictionary that holds all of the individuals values.
 # FORMAT: {'Individual ID' : Person object }
@@ -214,7 +213,7 @@ def listLivingMarried():
         return 1
 
 
-def birthBeforeMarriage():
+def birthBeforeMarriage_MarriageBeforeDivorce():
     for fam in Families.values():
         if(fam.married != "N/A"):
             marriageDate = parseDate(fam.married)
@@ -223,6 +222,11 @@ def birthBeforeMarriage():
             if (not (isDateLess(husbandBirthDate, marriageDate) or isDateLess(wifeBirthDate, marriageDate))):
                 print('Error: US02: Birth should occur before marriage of an individual')
                 return 1
+            if fam.divorced != 'N/A':
+                divorceDate = parseDate(fam.divorced)
+                if isDateLess(divorceDate, marriageDate):
+                    print('Error: US04: Divorce should not occur before marriage')
+                    return 1
     return 0
 
 def birthBeforeDeath():
@@ -502,7 +506,7 @@ def listData():
 def calculateErrors():
     uniqueNameAndBirthdays(Individuals)
     checkCorrespondingEntries()
-    birthBeforeMarriage()
+    birthBeforeMarriage_MarriageBeforeDivorce()
     birthBeforeDeath()
 
 
