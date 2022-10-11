@@ -214,20 +214,29 @@ def listLivingMarried():
 
 
 def birthBeforeMarriage_MarriageBeforeDivorce():
+    result = 0
     for fam in Families.values():
         if(fam.married != "N/A"):
             marriageDate = parseDate(fam.married)
             husbandBirthDate = parseDate(Individuals[fam.husband_id].birthday)
             wifeBirthDate = parseDate(Individuals[fam.wife_id].birthday)
+            wifeDeathDate = Individuals[fam.wife_id].death
+            husbandDeathDate = Individuals[fam.husband_id].death
             if (not (isDateLess(husbandBirthDate, marriageDate) or isDateLess(wifeBirthDate, marriageDate))):
                 print('Error: US02: Birth should occur before marriage of an individual')
-                return 1
+                result = 1
             if fam.divorced != 'N/A':
                 divorceDate = parseDate(fam.divorced)
                 if isDateLess(divorceDate, marriageDate):
                     print('Error: US04: Divorce should not occur before marriage')
-                    return 1
-    return 0
+                    result = 1
+            if husbandDeathDate != 'N/A' and isDateLess(parseDate(husbandDeathDate), marriageDate):
+                print('Error: US05: Marriage cannot occur after husbands death')
+                result = 1
+            if wifeDeathDate != 'N/A' and isDateLess(parseDate(wifeDeathDate), marriageDate):
+                print('Error: US05: Marriage cannot occur after wifes death')
+                result = 1
+    return result
 
 def birthBeforeDeath():
     for dec in deceasedList:
