@@ -4,7 +4,7 @@ from prettytable import PrettyTable
 from Person import Person
 from Family import Family
 from constants import month_dict, FAMILY_COLUMNS, INDIVIDUAL_COLUMNS
-from utils import diff_month, parseDate, isDateLess
+from utils import diff_month, parseDate, isDateLess, thirty_day_difference
 
 # Dictionary that holds all of the individuals values.
 # FORMAT: {'Individual ID' : Person object }
@@ -18,6 +18,7 @@ Families = {}
 errors = []
 
 died30DaysAgo = []
+born30DaysAgo = []
 
 deceasedList = []
 
@@ -110,6 +111,8 @@ def readIndividual(idx, lines):
     if (temp_alive == False):
         diedPast30Days(temp_death, indi)
 
+    '''Checks if born in the past 30 days'''
+    bornPast30Days(temp_birthday, indi)
     return idx-1
 
 # this function reads in all of the families data and adds them to the Family class,
@@ -247,25 +250,6 @@ def birthBeforeDeath():
             return 1
     return 0
 
-def listRecentBirths():
-    print('\n Recent births')
-    table = PrettyTable(INDIVIDUAL_COLUMNS)
-    for person in Individuals.values():
-        day, month, year = person.birthday.split()
-        d1 = datetime.today()
-        d2 = datetime(int(year), month_dict[month], int(day))
-        if (diff_month(d1, d2) <= 1):
-            table.add_row([person.id, person.name, person.gender, person.birthday,
-                          person.age, person.alive, person.death, person.children, person.spouse])
-
-    if (len(table.rows)):
-        print(table)
-        print(len(table.rows), "Recent births found in 30 days")
-        return 0
-    else:
-        print("No recent births found in the past 30 days")
-        return 1
-
 
 # Shows the data in a pretty table of the individuals and the families
 def showData():
@@ -314,26 +298,25 @@ def neverMarriedOver30():
     return len(table.rows)
 
 
+def bornPast30Days(birthday, indi):
+    '''Shows people born in the past 30 days'''
+    if thirty_day_difference(birthday):
+        born30DaysAgo.append(indi)
+
 def diedPast30Days(death, indi):
-    '''Gets the date 30 days before today'''
-    day_before = (date.today()-timedelta(days=30))
-    curr_day = int(day_before.strftime("%d"))
-    curr_month = int(day_before.strftime("%m"))
-    curr_year = int(day_before.strftime("%Y"))
-
-    '''Gets the death date'''
-    death_list = death.split()
-    ind_day = int(death_list[0])
-    ind_month = month_dict[death_list[1]]
-    ind_year = int(death_list[2])
-
-    if (curr_year < ind_year):
-        died30DaysAgo.append(indi)
-    elif (curr_year == ind_year and curr_month < ind_month):
-        died30DaysAgo.append(indi)
-    elif (curr_year == ind_year and curr_month == ind_month and curr_day < ind_day):
+    '''Shows people who died in the past 30 days'''
+    if thirty_day_difference(death):
         died30DaysAgo.append(indi)
 
+def showBorn30DaysAgo():
+    print('\nPeople who were born in the past 30 days:')
+    table = PrettyTable(INDIVIDUAL_COLUMNS)
+    for person in born30DaysAgo:
+        table.add_row([person.id, person.name, person.gender, person.birthday,
+                      person.age, person.alive, person.death, person.children, person.spouse])
+    print(table)
+    print(f'{len(died30DaysAgo)} recent deaths')
+    return len(born30DaysAgo)
 
 def showDied30DaysAgo():
     print('\nPeople who died in the past 30 days:')
@@ -508,7 +491,7 @@ def listData():
     listLivingMarried()
     neverMarriedOver30()
     showDied30DaysAgo()
-    listRecentBirths()
+    showBorn30DaysAgo()
     listDeceased()
 
 
