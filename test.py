@@ -1,19 +1,19 @@
 import unittest
 
 from GEDCOM import (checkUniqueIndividualIDs, listDeceased, uniqueNameAndBirthdays,
-                    checkCorrespondingEntries,
-                    listLivingMarried,
-                    listRecentBirths,
-                    calculate_age,
-                    checkUniqueFamilyIDs,
-                    checkUniqueFamilyNames,
-                    listDeceased,
-                    birthBeforeMarriage,
-                    birthBeforeDeath,
-                    listMulitpleBirths)
+checkCorrespondingEntries,
+listLivingMarried,
+showBorn30DaysAgo,
+showDied30DaysAgo,
+calculate_age, 
+checkUniqueFamilyIDs,
+checkUniqueFamilyNames,
+listDeceased,
+neverMarriedOver30,
+checkSpouseAndMarriageDate,
+listMulitpleBirths)
 
-from GEDCOM import uniqueNameAndBirthdays, checkCorrespondingEntries, listLivingMarried, listRecentBirths, calculate_age, showDied30DaysAgo, neverMarriedOver30, checkSpouseAndMarriageDate
-
+from utils import thirty_day_difference
 
 from Person import Person
 
@@ -69,7 +69,7 @@ class TestForErrors(unittest.TestCase):
         self.assertEqual(listLivingMarried(), 0)
 
     def test_list_recent_births(self):
-        self.assertEqual(listRecentBirths(), 1)
+        self.assertEqual(showBorn30DaysAgo(), 0)
 
     def test_calculate_age(self):
         self.assertEqual(calculate_age('12 NOV 1972', '2 JUL 2006'), 33)
@@ -101,12 +101,16 @@ class TestForErrors(unittest.TestCase):
     def test_checkSpouseAndMarriageDate(self):
         self.assertEqual(checkSpouseAndMarriageDate(), 0)
 
+    def test_thirtyDayDifference(self):
+        self.assertEqual(thirty_day_difference('10 OCT 2022'), True)
+        self.assertEqual(thirty_day_difference('30 SEP 2022'), True)
+        self.assertEqual(thirty_day_difference('9 SEP 2022'), False)
+
     def test_birthBeforeMarriage(self):
         self.assertEqual(birthBeforeMarriage(), 0)
 
     def test_birthBeforeDeath(self):
         self.assertEqual(birthBeforeDeath(), 0)
-
 
 if __name__ == '__main__':
     unittest.main()
