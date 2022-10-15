@@ -219,15 +219,10 @@ def listLivingMarried():
 def birthBeforeMarriage_MarriageBeforeDivorce():
     result = 0
     for fam in Families.values():
-        if(fam.married != "N/A"):
+        if (fam.married != "N/A"):
             marriageDate = parseDate(fam.married)
-            husbandBirthDate = parseDate(Individuals[fam.husband_id].birthday)
-            wifeBirthDate = parseDate(Individuals[fam.wife_id].birthday)
             wifeDeathDate = Individuals[fam.wife_id].death
             husbandDeathDate = Individuals[fam.husband_id].death
-            if (not (isDateLess(husbandBirthDate, marriageDate) or isDateLess(wifeBirthDate, marriageDate))):
-                print('Error: US02: Birth should occur before marriage of an individual')
-                result = 1
             if fam.divorced != 'N/A':
                 divorceDate = parseDate(fam.divorced)
                 if isDateLess(divorceDate, marriageDate):
@@ -241,15 +236,27 @@ def birthBeforeMarriage_MarriageBeforeDivorce():
                 result = 1
     return result
 
+
+def birthBeforeMarriage():
+    for fam in Families.values():
+        if (fam.married != "N/A"):
+            marriageDate = parseDate(fam.married)
+            husbandBirthDate = parseDate(Individuals[fam.husband_id].birthday)
+            wifeBirthDate = parseDate(Individuals[fam.wife_id].birthday)
+            if (not (isDateLess(husbandBirthDate, marriageDate) or isDateLess(wifeBirthDate, marriageDate))):
+                print('Error: US02: Birth should occur before marriage of an individual')
+                return 1
+    return 0
+
+
 def birthBeforeDeath():
     for dec in deceasedList:
         birthDate = parseDate(dec.birthday)
         deathDate = parseDate(dec.death)
-        if(not isDateLess(birthDate, deathDate)):
+        if (not isDateLess(birthDate, deathDate)):
             print('Error: US03: Birth should occur before death of an individual')
             return 1
     return 0
-
 
 # Shows the data in a pretty table of the individuals and the families
 def showData():
@@ -280,7 +287,7 @@ def checkSpouseAndMarriageDate():
             print(
                 fam.id + ' is being deleted as they have the same wife name, husband name, and mariage date')
             del Families[fam.id]
-            count+=1
+            count += 1
         else:
             spouseMarriageSet.add(sm)
     return count
@@ -396,9 +403,10 @@ def checkUniqueIndividualIDs():
                 uniqueIDs.append(person.id)
             else:
                 print("\n" + person.id + " is not unique")
-                return False    
+                return False
         print("\n All indivuals IDs are unique")
         return False
+
 
 def checkUniqueFamilyIDs():
     uniqueIDs = []
@@ -408,7 +416,7 @@ def checkUniqueFamilyIDs():
                 uniqueIDs.append(fam.id)
             else:
                 print("\n" + fam.id + " is not unique")
-                return False    
+                return False
         print("\n All families IDs are unique")
         break
 
@@ -420,26 +428,28 @@ def checkUniqueFamilyNames():
             husbandName = fam.husband_name.split(" ")
             wifeName = fam.wife_name.split(" ")
             if husbandName[0] == wifeName[0]:
-                print("Cannot have to people in the same family with the same first name")
+                print(
+                    "Cannot have to people in the same family with the same first name")
                 return False
             else:
                 uniqueNames.append(husbandName[0])
                 uniqueNames.append(wifeName[0])
 
             children = fam.children
-      
+
             for child in children:
                 childName = Individuals.get(child).name
                 firstName = childName.split(" ")
                 if firstName[0] not in uniqueNames:
-                   uniqueNames.append(firstName[0])
+                    uniqueNames.append(firstName[0])
                 else:
                     print(f"Cannot have same name, {firstName[0]}")
                     return False
             print("\n All names in family {} are unique".format(fam.id))
             print(uniqueNames)
             uniqueNames.clear()
-        break        
+        break
+
 
 def listDeceased():
     for indi in Individuals.values():
@@ -467,10 +477,10 @@ def listMulitpleBirths():
             if child.birthday not in multipleBirths:
                 multipleBirths.append(child.birthday)
             elif child.birthday in multipleBirths:
-                print((len(lets) +1) + "Births on {}".format(child.birthday))
+                print((len(lets) + 1) + "Births on {}".format(child.birthday))
                 multipleBirths.append(child.birthday)
                 lets.append(child.birthday)
-          
+
     if len(lets) == 0:
         print("\n No multiple births")
 
@@ -498,8 +508,9 @@ def listData():
 def calculateErrors():
     uniqueNameAndBirthdays(Individuals)
     checkCorrespondingEntries()
-    birthBeforeMarriage_MarriageBeforeDivorce()
     birthBeforeDeath()
+    birthBeforeMarriage()
+    birthBeforeMarriage_MarriageBeforeDivorce()
 
 
 # Driver code

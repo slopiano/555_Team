@@ -84,7 +84,7 @@ class TestForErrors(unittest.TestCase):
             "2": Person("1", "BSD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
         }
         self.assertFalse(checkUniqueIndividualIDs())
-    
+
     def test_checkUniqueFamilyIDs(self):
         dummy_data = {
             "1": Person("1", "ASD", 22, "M", "01-JAN-2001", True, "N\A", "N\A", "N\A"),
@@ -105,6 +105,12 @@ class TestForErrors(unittest.TestCase):
         self.assertEqual(thirty_day_difference('10 OCT 2022'), True)
         self.assertEqual(thirty_day_difference('30 SEP 2022'), True)
         self.assertEqual(thirty_day_difference('9 SEP 2022'), False)
+
+    def test_birthBeforeMarriage(self):
+        self.assertEqual(birthBeforeMarriage(), 0)
+
+    def test_birthBeforeDeath(self):
+        self.assertEqual(birthBeforeDeath(), 0)
 
 if __name__ == '__main__':
     unittest.main()
