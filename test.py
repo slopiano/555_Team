@@ -1,6 +1,6 @@
 import unittest
 
-from GEDCOM import (checkUniqueIndividualIDs, listDeceased, uniqueNameAndBirthdays,
+from GEDCOM import (birthBeforeDeath, birthBeforeMarriage, birthOutOfWedlock, checkUniqueIndividualIDs, listDeceased, siblingMarriage, uniqueNameAndBirthdays,
 checkCorrespondingEntries,
 listLivingMarried,
 showBorn30DaysAgo,
@@ -13,7 +13,7 @@ neverMarriedOver30,
 checkSpouseAndMarriageDate,
 listMulitpleBirths)
 
-from utils import thirty_day_difference
+from utils import thirty_day_difference, diff_month, isDateLess
 
 from Person import Person
 
@@ -109,8 +109,11 @@ class TestForErrors(unittest.TestCase):
     def test_birthBeforeMarriage(self):
         self.assertEqual(birthBeforeMarriage(), 0)
 
-    def test_birthBeforeDeath(self):
-        self.assertEqual(birthBeforeDeath(), 0)
+    def test_birthsOutOfWedlock(self):
+        self.assertEqual(birthOutOfWedlock(), 2)
+
+    def test_SiblingMarriages(self):
+        self.assertEqual(siblingMarriage(), 0)
 
 if __name__ == '__main__':
     unittest.main()
