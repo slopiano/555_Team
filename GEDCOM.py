@@ -485,6 +485,51 @@ def listMulitpleBirths():
         print("\n No multiple births")
 
 
+def birthOutOfWedlock():
+    count = 0 
+    for fam in Families.values():
+        husbandDead = Individuals[fam.husband_id].death 
+        wifeDead = Individuals[fam.wife_id].death 
+        if (fam.married != "N/A" and fam.divorced != "N/A"):  #if family is married and divorced
+            marriageDate = parseDate(fam.married)
+            for children in fam.children:
+                child = Individuals.get(children)
+                childBirthDate = parseDate(child.birthday)
+                if isDateLess(childBirthDate,marriageDate):
+                    print(f"{child.name} Born out of wedlock")
+                    count += 1
+        if (fam.married != "N/A" and fam.divorced == "N/A" and husbandDead == "N/A" and wifeDead == "N/A"):   #if fam is married and not divorced 
+            marriageDate = parseDate(fam.married)
+            for children in fam.children:
+                child = Individuals.get(children)
+                childBirthDate = parseDate(child.birthday)
+                if diff_month(childBirthDate,marriageDate) >= 9:
+                    print(f"{child.name} Born out of wedlock")
+                    count += 1
+        if (fam.married == "N/A" and fam.divorced == "N/A"):    #if fam is not married or divorced
+            for children in fam.children:
+                child = Individuals.get(children)
+                childBirthDate = parseDate(child.birthday)
+                print(f"{child.name} Born out of wedlock")
+                count += 1
+    return count
+            
+def siblingMarriage():
+    count = 0 
+    for fam in Families.values():
+        childList = []
+        for children in fam.children:
+            child = Individuals.get(children)
+            childList.append(child)
+            for each in childList:
+                if each.spouse in children:
+                    print(f"Cannot have siblings marry")
+                    count+=1 
+    return count
+            
+        
+
+
 def checkCorrespondingEntries():
     # checks for the corresponding entries in family
     indi = checkCorrespondingIndividualRecords()
@@ -511,6 +556,8 @@ def calculateErrors():
     birthBeforeDeath()
     birthBeforeMarriage()
     birthBeforeMarriage_MarriageBeforeDivorce()
+    birthOutOfWedlock()
+    siblingMarriage()
 
 
 # Driver code
