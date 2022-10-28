@@ -23,12 +23,9 @@ def thirty_day_difference(this_date):
 def isDateValid(thisDate):
     if thisDate == "N/A":
         return True
-    thisDateList =  thisDate.split()
-    day = int(thisDateList[0])
-    month = month_dict[thisDateList[1]]
-    year = int(thisDateList[2])
+    day, month, year =  thisDate.split()
     try:
-        datetime.datetime(year, month, day)
+        datetime.datetime(int(year), month_dict[month], int(day))
         return True
     except ValueError:
         return False
