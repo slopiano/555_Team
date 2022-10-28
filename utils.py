@@ -19,3 +19,16 @@ def thirty_day_difference(this_date):
     if d1 < d2:
         return True
     return False
+
+def isDateValid(thisDate):
+    if thisDate == "N/A":
+        return True
+    thisDateList =  thisDate.split()
+    day = int(thisDateList[0])
+    month = month_dict[thisDateList[1]]
+    year = int(thisDateList[2])
+    try:
+        datetime.datetime(year, month, day)
+        return True
+    except ValueError:
+        return False
