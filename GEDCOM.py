@@ -4,7 +4,7 @@ from prettytable import PrettyTable
 from Person import Person
 from Family import Family
 from constants import month_dict, FAMILY_COLUMNS, INDIVIDUAL_COLUMNS
-from utils import diff_month, parseDate, isDateLess, thirty_day_difference, thirty_day_ahead
+from utils import diff_month, parseDate, isDateLess, thirty_day_difference, thirty_day_ahead, isDateValid
 
 # Dictionary that holds all of the individuals values.
 # FORMAT: {'Individual ID' : Person object }
@@ -103,6 +103,9 @@ def readIndividual(idx, lines):
                 idx -= 1
         idx += 1
 
+    if not isDateValid(temp_birthday) or not isDateValid(temp_death):
+        print(f'date birthday {temp_birthday} or date of death {temp_death} is not valid')
+        continue
     temp_age = calculate_age(temp_birthday, temp_death)
     indi = Person(temp_id, temp_name, temp_age, temp_gender,
                   temp_birthday, temp_alive, temp_death, temp_child, temp_spouse)
@@ -160,6 +163,9 @@ def readFamily(idx, lines):
             temp_children.append(tags[2])
         idx += 1
 
+    if not isDateValid(temp_married) or not isDateValid(temp_divorced):
+        print(f'date birthday {temp_married} or date of death {temp_divorced} is not valid')
+        continue
     fam = Family(temp_id, temp_married, temp_divorced, temp_husband_id,
                  temp_husband_name, temp_wife_id, temp_wife_name, temp_children)
 

@@ -20,6 +20,16 @@ def thirty_day_difference(this_date):
         return True
     return False
 
+def isDateValid(thisDate):
+    if thisDate == "N/A":
+        return True
+    day, month, year =  thisDate.split()
+    try:
+        datetime.datetime(int(year), month_dict[month], int(day))
+        return True
+    except ValueError:
+        return False
+
 def thirty_day_ahead(this_date):
     if this_date == 'N/A':
         return False
@@ -37,4 +47,3 @@ def thirty_day_ahead(this_date):
         return True
     else:
         return False
-    
