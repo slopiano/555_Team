@@ -103,20 +103,20 @@ def readIndividual(idx, lines):
                 idx -= 1
         idx += 1
 
-    if not isDateValid(temp_birthday) or not isDateValid(temp_death):
+    if isDateValid(temp_birthday) and isDateValid(temp_death):
+        temp_age = calculate_age(temp_birthday, temp_death)
+        indi = Person(temp_id, temp_name, temp_age, temp_gender,
+                        temp_birthday, temp_alive, temp_death, temp_child, temp_spouse)
+        Individuals[temp_id] = indi
+
+        '''Checks if they died in the past 30 days'''
+        if (temp_alive == False):
+            diedPast30Days(temp_death, indi)
+
+        '''Checks if born in the past 30 days'''
+        bornPast30Days(temp_birthday, indi)
+    else:
         print(f'date birthday {temp_birthday} or date of death {temp_death} is not valid')
-        continue
-    temp_age = calculate_age(temp_birthday, temp_death)
-    indi = Person(temp_id, temp_name, temp_age, temp_gender,
-                  temp_birthday, temp_alive, temp_death, temp_child, temp_spouse)
-    Individuals[temp_id] = indi
-
-    '''Checks if they died in the past 30 days'''
-    if (temp_alive == False):
-        diedPast30Days(temp_death, indi)
-
-    '''Checks if born in the past 30 days'''
-    bornPast30Days(temp_birthday, indi)
     return idx-1
 
 # this function reads in all of the families data and adds them to the Family class,
@@ -163,16 +163,16 @@ def readFamily(idx, lines):
             temp_children.append(tags[2])
         idx += 1
 
-    if not isDateValid(temp_married) or not isDateValid(temp_divorced):
-        print(f'date birthday {temp_married} or date of death {temp_divorced} is not valid')
-        continue
-    fam = Family(temp_id, temp_married, temp_divorced, temp_husband_id,
-                 temp_husband_name, temp_wife_id, temp_wife_name, temp_children)
+    if isDateValid(temp_married) and isDateValid(temp_divorced):
+        fam = Family(temp_id, temp_married, temp_divorced, temp_husband_id,
+                    temp_husband_name, temp_wife_id, temp_wife_name, temp_children)
 
-    if thirty_day_ahead(temp_married):
-        anniversariesNext30Days.append(fam)
-    
-    Families[temp_id] = fam
+        if thirty_day_ahead(temp_married):
+            anniversariesNext30Days.append(fam)
+        
+        Families[temp_id] = fam
+    else:
+        print(f'date birthday {temp_married} or date of death {temp_divorced} is not valid')
     return idx-1
 
 # This function calculates the age of an individual from their birthday and death day

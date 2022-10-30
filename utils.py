@@ -25,7 +25,7 @@ def isDateValid(thisDate):
         return True
     day, month, year =  thisDate.split()
     try:
-        datetime.datetime(int(year), month_dict[month], int(day))
+        d2 = datetime(int(year), month_dict[month], int(day))
         return True
     except ValueError:
         return False
