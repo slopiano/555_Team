@@ -4,7 +4,11 @@ from prettytable import PrettyTable
 from Person import Person
 from Family import Family
 from constants import month_dict, FAMILY_COLUMNS, INDIVIDUAL_COLUMNS
-from utils import diff_month, parseDate, isDateLess, thirty_day_difference, thirty_day_ahead, isDateValid
+from utils import (diff_month,
+                   parseDate,
+                   isDateLess,
+                   thirty_day_difference, thirty_day_ahead,
+                   isDateValid, isDateLessThanOrEqual, is_not_none)
 
 # Dictionary that holds all of the individuals values.
 # FORMAT: {'Individual ID' : Person object }
@@ -106,7 +110,7 @@ def readIndividual(idx, lines):
     if isDateValid(temp_birthday) and isDateValid(temp_death):
         temp_age = calculate_age(temp_birthday, temp_death)
         indi = Person(temp_id, temp_name, temp_age, temp_gender,
-                        temp_birthday, temp_alive, temp_death, temp_child, temp_spouse)
+                      temp_birthday, temp_alive, temp_death, temp_child, temp_spouse)
         Individuals[temp_id] = indi
 
         '''Checks if they died in the past 30 days'''
@@ -116,7 +120,8 @@ def readIndividual(idx, lines):
         '''Checks if born in the past 30 days'''
         bornPast30Days(temp_birthday, indi)
     else:
-        print(f'date birthday {temp_birthday} or date of death {temp_death} is not valid')
+        print(
+            f'date birthday {temp_birthday} or date of death {temp_death} is not valid')
     return idx-1
 
 # this function reads in all of the families data and adds them to the Family class,
@@ -165,14 +170,15 @@ def readFamily(idx, lines):
 
     if isDateValid(temp_married) and isDateValid(temp_divorced):
         fam = Family(temp_id, temp_married, temp_divorced, temp_husband_id,
-                    temp_husband_name, temp_wife_id, temp_wife_name, temp_children)
+                     temp_husband_name, temp_wife_id, temp_wife_name, temp_children)
 
         if thirty_day_ahead(temp_married):
             anniversariesNext30Days.append(fam)
-        
+
         Families[temp_id] = fam
     else:
-        print(f'date birthday {temp_married} or date of death {temp_divorced} is not valid')
+        print(
+            f'date birthday {temp_married} or date of death {temp_divorced} is not valid')
     return idx-1
 
 # This function calculates the age of an individual from their birthday and death day
@@ -260,6 +266,45 @@ def birthBeforeMarriage():
     return 0
 
 
+# US07: Death should be less than 150 years after birth for dead people,
+# and current date should be less than 150 years after birth for all living people
+def is_less_than_150_years():
+    date_150_years_in_future = (datetime.today()+timedelta(weeks=365*150))
+    for indi in Individuals.values():
+        if (is_not_none(indi.birthday)):
+            birthDate = parseDate(indi.birthday)
+        if (is_not_none(indi.death)):
+            deathDate = parseDate(indi.death)
+        if (not (isDateLess(birthDate, date_150_years_in_future) or isDateLess(deathDate, date_150_years_in_future))):
+            print('Error: US07: Less then 150 years old')
+            return 1
+
+
+def validate_life_events():
+    # US01: Dates (birth, marriage, divorce, death) should not be after the current date
+    today = datetime.today()
+    for fam in Families.values():
+        if (is_not_none(fam.married)):
+            marriageDate = parseDate(fam.married)
+        if (is_not_none(fam.divorced)):
+            divorcedDate = parseDate(fam.divorced)
+        if (not (isDateLessThanOrEqual(marriageDate, today) or isDateLessThanOrEqual(divorcedDate, today))):
+            print(
+                'Error: US01: Dates (birth, marriage, divorce, death) should not be after the current date')
+            return 1
+
+    for indi in Individuals.values():
+        if (is_not_none(indi.birthday)):
+            birthDate = parseDate(indi.birthday)
+        if (is_not_none(indi.death)):
+            deathDate = parseDate(indi.death)
+        if (not (isDateLessThanOrEqual(birthDate, today) or isDateLessThanOrEqual(deathDate, today))):
+            print(
+                'Error: US01: Dates (birth, marriage, divorce, death) should not be after the current date')
+            return 1
+    return 0
+
+
 def birthBeforeDeath():
     for dec in deceasedList:
         birthDate = parseDate(dec.birthday)
@@ -270,6 +315,8 @@ def birthBeforeDeath():
     return 0
 
 # Shows the data in a pretty table of the individuals and the families
+
+
 def showData():
     ordered_ind = OrderedDict(sorted(Individuals.items()))
     ordered_fam = OrderedDict(sorted(Families.items()))
@@ -321,10 +368,12 @@ def bornPast30Days(birthday, indi):
     if thirty_day_difference(birthday):
         born30DaysAgo.append(indi)
 
+
 def diedPast30Days(death, indi):
     '''Shows people who died in the past 30 days'''
     if thirty_day_difference(death):
         died30DaysAgo.append(indi)
+
 
 def showBorn30DaysAgo():
     print('\nPeople who were born in the past 30 days:')
@@ -336,6 +385,7 @@ def showBorn30DaysAgo():
     print(f'{len(died30DaysAgo)} recent deaths')
     return len(born30DaysAgo)
 
+
 def showDied30DaysAgo():
     print('\nPeople who died in the past 30 days:')
     table = PrettyTable(INDIVIDUAL_COLUMNS)
@@ -346,16 +396,18 @@ def showDied30DaysAgo():
     print(f'{len(died30DaysAgo)} recent deaths')
     return len(died30DaysAgo)
 
+
 def showUpcomingAnniversaries():
     print('\nPeople with anniversaries coming up in the next 30 days:')
     table = PrettyTable(FAMILY_COLUMNS)
     for fam in anniversariesNext30Days:
         if (Individuals[fam.husband_id].alive and Individuals[fam.wife_id].alive and fam.married != 'N/A'):
             table.add_row([fam.id, fam.married, fam.divorced, fam.husband_id,
-                    fam.husband_name, fam.wife_id, fam.wife_name, fam.children])
+                           fam.husband_name, fam.wife_id, fam.wife_name, fam.children])
     print(table)
     print(f'{len(anniversariesNext30Days)} upcoming anniversaries')
     return len(anniversariesNext30Days)
+
 
 def uniqueNameAndBirthdays(individuals):
     if (not (len(individuals))):
@@ -507,36 +559,38 @@ def listMulitpleBirths():
 
 
 def birthOutOfWedlock():
-    count = 0 
+    count = 0
     for fam in Families.values():
-        husbandDead = Individuals[fam.husband_id].death 
-        wifeDead = Individuals[fam.wife_id].death 
-        if (fam.married != "N/A" and fam.divorced != "N/A"):  #if family is married and divorced
+        husbandDead = Individuals[fam.husband_id].death
+        wifeDead = Individuals[fam.wife_id].death
+        if (fam.married != "N/A" and fam.divorced != "N/A"):  # if family is married and divorced
             marriageDate = parseDate(fam.married)
             for children in fam.children:
                 child = Individuals.get(children)
                 childBirthDate = parseDate(child.birthday)
-                if isDateLess(childBirthDate,marriageDate):
+                if isDateLess(childBirthDate, marriageDate):
                     print(f"{child.name} Born out of wedlock")
                     count += 1
-        if (fam.married != "N/A" and fam.divorced == "N/A" and husbandDead == "N/A" and wifeDead == "N/A"):   #if fam is married and not divorced 
+        # if fam is married and not divorced
+        if (fam.married != "N/A" and fam.divorced == "N/A" and husbandDead == "N/A" and wifeDead == "N/A"):
             marriageDate = parseDate(fam.married)
             for children in fam.children:
                 child = Individuals.get(children)
                 childBirthDate = parseDate(child.birthday)
-                if diff_month(childBirthDate,marriageDate) >= 9:
+                if diff_month(childBirthDate, marriageDate) >= 9:
                     print(f"{child.name} Born out of wedlock")
                     count += 1
-        if (fam.married == "N/A" and fam.divorced == "N/A"):    #if fam is not married or divorced
+        if (fam.married == "N/A" and fam.divorced == "N/A"):  # if fam is not married or divorced
             for children in fam.children:
                 child = Individuals.get(children)
                 childBirthDate = parseDate(child.birthday)
                 print(f"{child.name} Born out of wedlock")
                 count += 1
     return count
-            
+
+
 def siblingMarriage():
-    count = 0 
+    count = 0
     for fam in Families.values():
         childList = []
         for children in fam.children:
@@ -545,10 +599,8 @@ def siblingMarriage():
             for each in childList:
                 if each.spouse in children:
                     print(f"Cannot have siblings marry")
-                    count+=1 
+                    count += 1
     return count
-            
-        
 
 
 def checkCorrespondingEntries():
@@ -580,6 +632,8 @@ def calculateErrors():
     birthBeforeMarriage_MarriageBeforeDivorce()
     birthOutOfWedlock()
     siblingMarriage()
+    validate_life_events()
+    is_less_than_150_years()
 
 
 # Driver code
@@ -592,4 +646,3 @@ checkUniqueIndividualIDs()
 checkUniqueFamilyIDs()
 checkUniqueFamilyNames()
 listMulitpleBirths()
-

@@ -1,19 +1,21 @@
 import unittest
 
 from GEDCOM import (birthBeforeDeath, birthBeforeMarriage, birthOutOfWedlock, checkUniqueIndividualIDs, listDeceased, siblingMarriage, uniqueNameAndBirthdays,
-checkCorrespondingEntries,
-listLivingMarried,
-showBorn30DaysAgo,
-showDied30DaysAgo,
-calculate_age, 
-checkUniqueFamilyIDs,
-checkUniqueFamilyNames,
-listDeceased,
-neverMarriedOver30,
-checkSpouseAndMarriageDate,
-listMulitpleBirths)
+                    checkCorrespondingEntries,
+                    listLivingMarried,
+                    showBorn30DaysAgo,
+                    showDied30DaysAgo,
+                    calculate_age,
+                    checkUniqueFamilyIDs,
+                    checkUniqueFamilyNames,
+                    listDeceased,
+                    neverMarriedOver30,
+                    checkSpouseAndMarriageDate,
+                    is_less_than_150_years,
+                    validate_life_events,
+                    listMulitpleBirths)
 
-from utils import thirty_day_difference, diff_month, isDateLess
+from utils import thirty_day_difference, diff_month, is_not_none
 
 from Person import Person
 
@@ -103,7 +105,7 @@ class TestForErrors(unittest.TestCase):
 
     def test_thirtyDayDifference(self):
         self.assertEqual(thirty_day_difference('10 OCT 2022'), True)
-        self.assertEqual(thirty_day_difference('30 SEP 2022'), True)
+        self.assertEqual(thirty_day_difference('30 OCT 2022'), True)
         self.assertEqual(thirty_day_difference('9 SEP 2022'), False)
 
     def test_birthBeforeMarriage(self):
@@ -114,6 +116,19 @@ class TestForErrors(unittest.TestCase):
 
     def test_SiblingMarriages(self):
         self.assertEqual(siblingMarriage(), 0)
+
+    def test_Less_than_150_years(self):
+        self.assertEqual(is_less_than_150_years(), 0)
+
+    def test_Less_than_150_years(self):
+        self.assertEqual(validate_life_events(), 0)
+
+    def test_is_not_none(self):
+        self.assertEqual(is_not_none("N/A"), False)
+
+    def test_is_not_none(self):
+        self.assertEqual(is_not_none("Not_N/A"), True)
+
 
 if __name__ == '__main__':
     unittest.main()
