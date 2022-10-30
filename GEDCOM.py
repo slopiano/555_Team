@@ -4,7 +4,7 @@ from prettytable import PrettyTable
 from Person import Person
 from Family import Family
 from constants import month_dict, FAMILY_COLUMNS, INDIVIDUAL_COLUMNS
-from utils import diff_month, parseDate, isDateLess, thirty_day_difference
+from utils import diff_month, parseDate, isDateLess, thirty_day_difference, thirty_day_ahead
 
 # Dictionary that holds all of the individuals values.
 # FORMAT: {'Individual ID' : Person object }
@@ -19,6 +19,7 @@ errors = []
 
 died30DaysAgo = []
 born30DaysAgo = []
+anniversariesNext30Days = []
 
 deceasedList = []
 
@@ -161,6 +162,10 @@ def readFamily(idx, lines):
 
     fam = Family(temp_id, temp_married, temp_divorced, temp_husband_id,
                  temp_husband_name, temp_wife_id, temp_wife_name, temp_children)
+
+    if thirty_day_ahead(temp_married):
+        anniversariesNext30Days.append(fam)
+    
     Families[temp_id] = fam
     return idx-1
 
@@ -335,6 +340,16 @@ def showDied30DaysAgo():
     print(f'{len(died30DaysAgo)} recent deaths')
     return len(died30DaysAgo)
 
+def showUpcomingAnniversaries():
+    print('\nPeople with anniversaries coming up in the next 30 days:')
+    table = PrettyTable(FAMILY_COLUMNS)
+    for fam in anniversariesNext30Days:
+        if (Individuals[fam.husband_id].alive and Individuals[fam.wife_id].alive and fam.married != 'N/A'):
+            table.add_row([fam.id, fam.married, fam.divorced, fam.husband_id,
+                    fam.husband_name, fam.wife_id, fam.wife_name, fam.children])
+    print(table)
+    print(f'{len(anniversariesNext30Days)} upcoming anniversaries')
+    return len(anniversariesNext30Days)
 
 def uniqueNameAndBirthdays(individuals):
     if (not (len(individuals))):
@@ -548,6 +563,7 @@ def listData():
     showDied30DaysAgo()
     showBorn30DaysAgo()
     listDeceased()
+    showUpcomingAnniversaries()
 
 
 def calculateErrors():
@@ -570,3 +586,4 @@ checkUniqueIndividualIDs()
 checkUniqueFamilyIDs()
 checkUniqueFamilyNames()
 listMulitpleBirths()
+

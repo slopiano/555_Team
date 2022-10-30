@@ -19,3 +19,22 @@ def thirty_day_difference(this_date):
     if d1 < d2:
         return True
     return False
+
+def thirty_day_ahead(this_date):
+    if this_date == 'N/A':
+        return False
+    d1 = (date.today()+timedelta(days=30))
+    d1 = datetime(year=d1.year, month=d1.month, day=d1.day)
+    d2 = date.today()
+    d2 = datetime(year=d2.year, month=d2.month, day=d2.day)
+    curr_year = d2.strftime("%Y")
+    curr_year = int(curr_year)
+    day, month, year = this_date.split()
+    d3 = datetime(curr_year, month_dict[month], int(day))
+    curr_year+=1
+    d4 = datetime(curr_year, month_dict[month], int(day))
+    if (d3 > d2 and d3 < d1) or (d4 > d2 and d4 < d1):
+        return True
+    else:
+        return False
+    
