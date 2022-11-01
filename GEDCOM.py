@@ -542,6 +542,7 @@ def showDeceased():
 
 
 def listMulitpleBirths():
+    returnVal = []
     for fam in Families.values():
         multipleBirths = []
         lets = []
@@ -550,12 +551,36 @@ def listMulitpleBirths():
             if child.birthday not in multipleBirths:
                 multipleBirths.append(child.birthday)
             elif child.birthday in multipleBirths:
-                print((len(lets) + 1) + "Births on {}".format(child.birthday))
+                print((len(lets) - 1) + "Births on {}".format(child.birthday))
                 multipleBirths.append(child.birthday)
                 lets.append(child.birthday)
+        returnVal = lets
 
     if len(lets) == 0:
         print("\n No multiple births")
+        returnVal = []
+    
+    return returnVal
+
+def noMoreThan5Births():
+    returnVal = []
+    for fam in Families.values():
+        multipleBirths = []
+        lets = []
+        for children in fam.children:
+            child = Individuals.get(children)
+            if child.birthday not in multipleBirths:
+                multipleBirths.append(child.birthday)
+            elif child.birthday in multipleBirths:
+                print((len(lets) - 1) + "Births on {}".format(child.birthday))
+                multipleBirths.append(child.birthday)
+                lets.append(child.birthday)
+    if len(returnVal) >= 6:
+        print("Cannot have more than 5 siblings born on the same day")
+        return -1
+    else:
+        return 0
+
 
 
 def birthOutOfWedlock():
@@ -634,6 +659,7 @@ def calculateErrors():
     siblingMarriage()
     validate_life_events()
     is_less_than_150_years()
+    noMoreThan5Births()
 
 
 # Driver code

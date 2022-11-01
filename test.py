@@ -13,7 +13,8 @@ from GEDCOM import (birthBeforeDeath, birthBeforeMarriage, birthOutOfWedlock, ch
                     checkSpouseAndMarriageDate,
                     is_less_than_150_years,
                     validate_life_events,
-                    listMulitpleBirths)
+                    listMulitpleBirths,
+                    noMoreThan5Births)
 
 from utils import thirty_day_difference, diff_month, is_not_none
 
