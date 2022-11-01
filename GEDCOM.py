@@ -550,12 +550,18 @@ def listMulitpleBirths():
             if child.birthday not in multipleBirths:
                 multipleBirths.append(child.birthday)
             elif child.birthday in multipleBirths:
-                print((len(lets) + 1) + "Births on {}".format(child.birthday))
+                print((len(lets) - 1) + "Births on {}".format(child.birthday))
                 multipleBirths.append(child.birthday)
                 lets.append(child.birthday)
+        return lets
 
     if len(lets) == 0:
         print("\n No multiple births")
+
+def noMoreThan5Births(self):
+    if self.listMultipleBirths() >= 5:
+        print("Cannot have more than 5 siblings born on the same day")
+
 
 
 def birthOutOfWedlock():
