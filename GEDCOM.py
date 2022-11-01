@@ -582,6 +582,32 @@ def noMoreThan5Births():
         return 0
 
 
+def allMalesinFamilyLastName():
+    childNames = []
+    husband = ""
+    for fam in Families.values():
+        childNames = []
+        husband = fam.husband_name.split('/')[1].strip()
+        print(husband)
+        for children in fam.children:
+            child = Individuals.get(children)
+            if child.gender == "M":
+                childLast = child.name.split('/')[1].strip()
+                childNames.append(childLast)
+    i = 0
+    value = 0
+    while (i < len(childNames)):
+        for each in childNames:
+            if each != childNames[i]:
+                value += 1
+            if each!= husband:
+                value += 1
+            i += 1
+    print(value)
+    return value    
+                    
+
+
 
 def birthOutOfWedlock():
     count = 0
@@ -660,6 +686,7 @@ def calculateErrors():
     validate_life_events()
     is_less_than_150_years()
     noMoreThan5Births()
+    allMalesinFamilyLastName()
 
 
 # Driver code

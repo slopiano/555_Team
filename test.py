@@ -1,6 +1,6 @@
 import unittest
 
-from GEDCOM import (birthBeforeDeath, birthBeforeMarriage, birthOutOfWedlock, checkUniqueIndividualIDs, listDeceased, siblingMarriage, uniqueNameAndBirthdays,
+from GEDCOM import (allMalesinFamilyLastName, birthBeforeDeath, birthBeforeMarriage, birthOutOfWedlock, checkUniqueIndividualIDs, listDeceased, siblingMarriage, uniqueNameAndBirthdays,
                     checkCorrespondingEntries,
                     listLivingMarried,
                     showBorn30DaysAgo,
@@ -126,6 +126,10 @@ class TestForErrors(unittest.TestCase):
 
     def test_is_not_none(self):
         self.assertEqual(is_not_none("N/A"), False)
+
+    def maleLastNames(self):
+        self.assertEqual(allMalesinFamilyLastName(), 0)
+    
 
     def test_is_not_none(self):
         self.assertEqual(is_not_none("Not_N/A"), True)
