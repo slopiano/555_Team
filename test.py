@@ -14,6 +14,8 @@ from GEDCOM import (allMalesinFamilyLastName, birthBeforeDeath, birthBeforeMarri
                     is_less_than_150_years,
                     validate_life_events,
                     listMulitpleBirths,
+                    birthBeforeDeathOfParents,
+                    divorceBeforeDeathOfSpouse,
                     noMoreThan5Births)
 
 from utils import thirty_day_difference, diff_month, is_not_none
@@ -129,10 +131,15 @@ class TestForErrors(unittest.TestCase):
 
     def maleLastNames(self):
         self.assertEqual(allMalesinFamilyLastName(), 0)
-    
 
     def test_is_not_none(self):
         self.assertEqual(is_not_none("Not_N/A"), True)
+
+    def test_birthBeforeDeathOfParents(self):
+        self.assertEqual(birthBeforeDeathOfParents(), 0)
+
+    def test_divorceBeforeDeathOfSpouse(self):
+        self.assertEqual(divorceBeforeDeathOfSpouse(), 0)
 
 
 if __name__ == '__main__':

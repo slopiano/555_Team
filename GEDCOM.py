@@ -559,8 +559,8 @@ def listMulitpleBirths():
     if len(lets) == 0:
         print("\n No multiple births")
         returnVal = []
-    
     return returnVal
+
 
 def noMoreThan5Births():
     returnVal = []
@@ -600,13 +600,11 @@ def allMalesinFamilyLastName():
         for each in childNames:
             if each != childNames[i]:
                 value += 1
-            if each!= husband:
+            if each != husband:
                 value += 1
             i += 1
     print(value)
-    return value    
-                    
-
+    return value
 
 
 def birthOutOfWedlock():
@@ -665,6 +663,46 @@ def checkCorrespondingEntries():
     print('\n Error: US26: Corresponding entries for person(spouse, children) family(spouse, children) do not exist')
     return False
 
+# US06: Divorce before death
+
+
+def divorceBeforeDeathOfSpouse():
+    for fam in Families.values():
+        if (is_not_none(fam.divorced)):
+            divorced_date = parseDate(fam.divorced)
+            husband = Individuals.get(fam.husband_id)
+            wife = Individuals.get(fam.wife_id)
+            if (not (husband.alive and wife.alive)):
+                husband_death = parseDate(husband.death)
+                wife_death = parseDate(wife.death)
+                if (not (isDateLess(divorced_date, husband_death) and isDateLess(divorced_date, wife_death))):
+                    print("\n Error: US06: Divorce before death")
+                    return 1
+    return 0
+
+
+# US09: Birth before death of parents
+# Child should be born before death of mother and before 9 months after death of father
+def birthBeforeDeathOfParents():
+    for fam in Families.values():
+        for child in fam.children:
+            child_birthday = parseDate(Individuals.get(child).birthday)
+            mother = Individuals.get(fam.wife_id)
+            father = Individuals.get(fam.husband_id)
+            is_child_birth_less_than_mothers_death = True
+            is_child_birth_before_nine_month_after_fathers_death = True
+            # Child birthday should be less than mother's death
+            if (is_not_none(mother.death)):
+                is_child_birth_less_than_mothers_death = isDateLess(
+                    child_birthday, mother.death)
+            if (is_not_none(father.death)):
+                is_child_birth_before_nine_month_after_fathers_death = isDateLess(child_birthday, parseDate(
+                    father.death) + timedelta(weeks=4 * 9))
+            if (not (is_child_birth_less_than_mothers_death and is_child_birth_before_nine_month_after_fathers_death)):
+                print("\n Error: US09: Birth before death of parents")
+                return 1
+    return 0
+
 
 def listData():
     listLivingMarried()
@@ -687,6 +725,8 @@ def calculateErrors():
     is_less_than_150_years()
     noMoreThan5Births()
     allMalesinFamilyLastName()
+    divorceBeforeDeathOfSpouse()
+    birthBeforeDeathOfParents()
 
 
 # Driver code
