@@ -16,7 +16,11 @@ from GEDCOM import (allMalesinFamilyLastName, birthBeforeDeath, birthBeforeMarri
                     listMulitpleBirths,
                     birthBeforeDeathOfParents,
                     divorceBeforeDeathOfSpouse,
-                    noMoreThan5Births)
+                    noMoreThan5Births,
+                    polyMarriageCount,
+                    marriageBefore14,
+                    Individuals,
+                    Families)
 
 from utils import thirty_day_difference, diff_month, is_not_none
 
@@ -133,6 +137,21 @@ class TestForErrors(unittest.TestCase):
                     'oiudhgf', '@I235@', 'oiudhggf', [])
         Families['@F235@'] = fam
         self.assertEqual(marriageBefore14(), 1)
+        del Families['@F235@']
+        del Individuals['@I234@']
+        del Individuals['@I235@']
+
+    def test_polyMarriageCount(self):
+        self.assertEqual(polyMarriageCount(), 1)
+        fam = Family('@F235@', '24 NOV 2022', 'N/A', '@I234@',
+                    'oiudhgf', '@I235@', 'oiudhggf', [])
+        Families['@F235@'] = fam
+        fam = Family('@F236@', '24 NOV 2022', 'N/A', '@I234@',
+                    'oiudhgf', '@I235@', 'oiudhggf', [])
+        Families['@F236@'] = fam
+        self.assertEqual(polyMarriageCount(), 2)
+        del Families['@F235@']
+        del Famalies['@F236@']
 
     def test_Less_than_150_years(self):
         self.assertEqual(is_less_than_150_years(), 0)
