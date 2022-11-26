@@ -11,11 +11,15 @@ checkUniqueFamilyNames,
 listDeceased,
 neverMarriedOver30,
 checkSpouseAndMarriageDate,
-listMulitpleBirths)
+listMulitpleBirths,
+marriageBefore14,
+Individuals,
+Families)
 
 from utils import thirty_day_difference, diff_month, isDateLess
 
 from Person import Person
+from Family import Family
 
 
 class TestForErrors(unittest.TestCase):
@@ -102,8 +106,8 @@ class TestForErrors(unittest.TestCase):
         self.assertEqual(checkSpouseAndMarriageDate(), 0)
 
     def test_thirtyDayDifference(self):
-        self.assertEqual(thirty_day_difference('10 OCT 2022'), True)
-        self.assertEqual(thirty_day_difference('30 SEP 2022'), True)
+        self.assertEqual(thirty_day_difference('10 OCT 2022'), False)
+        self.assertEqual(thirty_day_difference('30 SEP 2022'), False)
         self.assertEqual(thirty_day_difference('9 SEP 2022'), False)
 
     def test_birthBeforeMarriage(self):
@@ -114,6 +118,19 @@ class TestForErrors(unittest.TestCase):
 
     def test_SiblingMarriages(self):
         self.assertEqual(siblingMarriage(), 0)
+    
+    def test_marriageBefore14(self):
+        self.assertEqual(marriageBefore14(), 0)
+        indi = Person('@I234@', 'oiudhgf', 12, 'M',
+                        '15 JUL 2010', True, 'N/A', [], 'N/A')
+        Individuals['@I234@'] = indi
+        indi = Person('@I235@', 'oiudhggf', 22, 'M',
+                        '30 JUL 2000', True, 'N/A', [], 'N/A')
+        Individuals['@I235@'] = indi
+        fam = Family('@F235@', '24 NOV 2022', 'N/A', '@I234@',
+                    'oiudhgf', '@I235@', 'oiudhggf', [])
+        Families['@F235@'] = fam
+        self.assertEqual(marriageBefore14(), 1)
 
 if __name__ == '__main__':
     unittest.main()
