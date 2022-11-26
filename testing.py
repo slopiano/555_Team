@@ -1,6 +1,6 @@
 import unittest
 
-from GEDCOM import (birthBeforeDeath, birthBeforeMarriage, birthOutOfWedlock, checkUniqueIndividualIDs, listDeceased, uniqueNameAndBirthdays,
+from GEDCOM import (birthBeforeDeath, birthBeforeMarriage, birthOutOfWedlock, checkUniqueIndividualIDs, listDeceased, noMoreThan5Births, uniqueNameAndBirthdays,
 checkCorrespondingEntries,
 listLivingMarried,
 showBorn30DaysAgo,
@@ -99,6 +99,15 @@ class TestForErrors(unittest.TestCase):
         res = checkUniqueFamilyNames(dummy_data, childData)
         print(res)
         self.assertEqual(res, 1)
+
+    def test_noMoreThan5Births(self):   #checking when a parent and child have the same name
+        childData = { "1" : Person( "2", "Worker McBride", 7 , "M", "20-JAN-2015", True , "N/A", "N/A", "N/A")
+        ,"2" : Person("7", "Taylor McBride", 14 ,"M", "20-JAN-2015", True , "N/A", "N/A", "N/A")}
+
+        dummy_data = {"1": Family("1", "24-JUL-1998", "N/A", "9", "Taylor Boxing", "5", "Kim Reinert", childData)}
+        res = noMoreThan5Births(childData)
+        print(res)
+        self.assertEqual(res, 0)
 
 
 
