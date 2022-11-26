@@ -651,6 +651,18 @@ def siblingMarriage():
                     count += 1
     return count
 
+def marriageBefore14():
+    count = 0
+    for fam in Families.values():
+        husband_marriage_age = calculate_age(Individuals[fam.husband_id].birthday, fam.married)
+        wife_marriage_age = calculate_age(Individuals[fam.wife_id].birthday, fam.married)
+        if(husband_marriage_age < 14 or wife_marriage_age < 14):
+            print(f'Error US10: {fam.id} has one or more individuals married when they were/are under 14')
+            count+=1
+    return count
+            
+        
+
 
 def checkCorrespondingEntries():
     # checks for the corresponding entries in family
@@ -714,6 +726,7 @@ def listData():
 
 
 def calculateErrors():
+    marriageBefore14()
     uniqueNameAndBirthdays(Individuals)
     checkCorrespondingEntries()
     birthBeforeDeath()
