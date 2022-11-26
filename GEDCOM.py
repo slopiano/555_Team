@@ -50,13 +50,16 @@ def parse(fileName):
         'Adding to the husband'
         if (Individuals[fam.husband_id].gender == 'F'):
             errors.append('Husband: ' + fam.husband_id + ' cannot be Female')
+        if fam.divorced == 'N/A':
+            Individuals[fam.husband_id].spouse = fam.wife_id
         Individuals[fam.husband_id].children = fam.children
-        Individuals[fam.husband_id].spouse = fam.wife_id
 
         'Adding to the wife'
         if (Individuals[fam.wife_id].gender == 'M'):
-            errors.append('Wife: ' + fam.husband_id + ' cannot be Male')
+            errors.append('Wife: ' + fam.wife_id + ' cannot be Male')
         Individuals[fam.wife_id].children = fam.children
+        if fam.divorced == 'N/A':
+            Individuals[fam.wife_id].spouse = fam.husband_id
         Individuals[fam.wife_id].spouse = fam.husband_id
 
         'Adding missing info into family'
@@ -660,8 +663,6 @@ def marriageBefore14():
             print(f'Error US10: {fam.id} has one or more individuals married when they were/are under 14')
             count+=1
     return count
-            
-        
 
 
 def checkCorrespondingEntries():
@@ -691,6 +692,18 @@ def divorceBeforeDeathOfSpouse():
                     print("\n Error: US06: Divorce before death")
                     return 1
     return 0
+
+def polyMarriageCount():
+    marriages = set()
+    count = 0
+    for fam in Families.values():
+        if (fam.husband_id in marriages or fam.wife_id in marriages) and fam.divorced == 'N/A':
+            print(f'\n Error US11: Cannot be married to more than one person {fam.husband_id} or {fam.wife_id}')
+            count+=1
+        if fam.divorced == 'N/A':
+            marriages.add(fam.husband_id)
+            marriages.add(fam.wife_id)
+    return count
 
 
 # US09: Birth before death of parents
