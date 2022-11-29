@@ -5,7 +5,7 @@ class Family:
         self.married = married
         self.divorced = divorced
         self.husband_id = husband_id
-        self.husand_name = husband_name
+        self.husband_name = husband_name
         self.wife_id = wife_id
         self.wife_name = wife_name
         self.children = children

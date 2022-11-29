@@ -494,34 +494,36 @@ def checkUniqueFamilyIDs():
         break
 
 
-def checkUniqueFamilyNames():
-    while True:
-        uniqueNames = []
-        for fam in Families.values():
-            husbandName = fam.husband_name.split(" ")
-            wifeName = fam.wife_name.split(" ")
-            if husbandName[0] == wifeName[0]:
-                print(
-                    "Cannot have to people in the same family with the same first name")
-                return False
-            else:
-                uniqueNames.append(husbandName[0])
-                uniqueNames.append(wifeName[0])
+def checkUniqueFamilyNames(families, indiList):
+    status = True
+    uniqueNames = []
+    for fam in families.values():
+        husbandName = fam.husband_name.split(" ")
+        wifeName = fam.wife_name.split(" ")
+        if husbandName[0] == wifeName[0]:
+            print("Cannot have two people in the same family with the same first name {}".format(husbandName[0]))
+            status = False
+        else:
+            uniqueNames.append(husbandName[0])
+            uniqueNames.append(wifeName[0])
 
-            children = fam.children
-
-            for child in children:
-                childName = Individuals.get(child).name
-                firstName = childName.split(" ")
-                if firstName[0] not in uniqueNames:
-                    uniqueNames.append(firstName[0])
+        if len(fam.children) > 0 and (status == True):
+            for child in fam.children:
+                childName = indiList.get(child).name
+                firstName = childName.split(" ")[0]
+                if firstName not in uniqueNames:
+                    uniqueNames.append(firstName)
                 else:
-                    print(f"Cannot have same name, {firstName[0]}")
-                    return False
+                    print("Cannot have same name" + firstName)
+                    status = False
             print("\n All names in family {} are unique".format(fam.id))
             print(uniqueNames)
             uniqueNames.clear()
-        break
+        elif status == True:
+            print("\n All names in family {} are unique".format(fam.id))
+            print(uniqueNames)
+            uniqueNames.clear()
+    return status
 
 
 def listDeceased():
@@ -640,6 +642,19 @@ def birthOutOfWedlock():
     return count
 
 
+def parentAges():
+    for fam in Families.values():
+        motherBirth = parseDate(Individuals.get(fam.wife_id).birthday)
+        fatherBirth = parseDate(Individuals.get(fam.husband_id).birthday)
+        for child in fam.children:
+            kidBirth = parseDate(Individuals.get(child).birthday)
+            if ((diff_month(kidBirth,fatherBirth) > 960) or (diff_month(kidBirth,motherBirth) > 720)):
+                return -1
+            
+    return 0
+
+
+
 def siblingMarriage():
     count = 0
     for fam in Families.values():
@@ -687,6 +702,7 @@ def calculateErrors():
     is_less_than_150_years()
     noMoreThan5Births()
     allMalesinFamilyLastName()
+    parentAges()
 
 
 # Driver code
@@ -697,5 +713,5 @@ calculateErrors()
 checkSpouseAndMarriageDate()
 checkUniqueIndividualIDs()
 checkUniqueFamilyIDs()
-checkUniqueFamilyNames()
+checkUniqueFamilyNames(Families, Individuals)
 listMulitpleBirths()

@@ -1,5 +1,5 @@
 import unittest
-
+from Family import Family
 from GEDCOM import (allMalesinFamilyLastName, birthBeforeDeath, birthBeforeMarriage, birthOutOfWedlock, checkUniqueIndividualIDs, listDeceased, siblingMarriage, uniqueNameAndBirthdays,
                     checkCorrespondingEntries,
                     listLivingMarried,
@@ -14,7 +14,8 @@ from GEDCOM import (allMalesinFamilyLastName, birthBeforeDeath, birthBeforeMarri
                     is_less_than_150_years,
                     validate_life_events,
                     listMulitpleBirths,
-                    noMoreThan5Births)
+                    noMoreThan5Births,
+                    parentAges)
 
 from utils import thirty_day_difference, diff_month, is_not_none
 
@@ -64,6 +65,23 @@ class TestForErrors(unittest.TestCase):
         }
         res = uniqueNameAndBirthdays(dummy_data)
         self.assertEqual(res, 0)
+
+    # checking when a parent and child have the same name
+    def test_noMoreThan5Births(self):
+        childData = {"1": Person("2", "Worker McBride", 7, "M", "20-JAN-2015", True, "N/A", "N/A", "N/A"),
+                     "2": Person("7", "Taylor McBride", 14, "M", "20-JAN-2015", True, "N/A", "N/A", "N/A")}
+
+        dummy_data = {"1": Family(
+            "1", "24-JUL-1998", "N/A", "9", "Taylor Boxing", "5", "Kim Reinert", childData)}
+        res = noMoreThan5Births()
+        print(res)
+        self.assertEqual(res, 0)
+
+    def test_ParentAgeGap(self):
+        res = parentAges()
+        print(res)
+        self.assertEqual(res, 0)
+
 
     def test_check_corresponding_entries(self):
         self.assertTrue(checkCorrespondingEntries())
@@ -121,7 +139,7 @@ class TestForErrors(unittest.TestCase):
     def test_Less_than_150_years(self):
         self.assertEqual(is_less_than_150_years(), 0)
 
-    def test_Less_than_150_years(self):
+    def test_Less_than_150_years2(self):
         self.assertEqual(validate_life_events(), 0)
 
     def test_is_not_none(self):
@@ -129,9 +147,8 @@ class TestForErrors(unittest.TestCase):
 
     def maleLastNames(self):
         self.assertEqual(allMalesinFamilyLastName(), 0)
-    
 
-    def test_is_not_none(self):
+    def test_is_not_none2(self):
         self.assertEqual(is_not_none("Not_N/A"), True)
 
 
