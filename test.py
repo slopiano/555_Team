@@ -19,7 +19,8 @@ from GEDCOM import (allMalesinFamilyLastName, birthBeforeDeath, birthBeforeMarri
                     noMoreThan5Births,
                     polyMarriageCount,
                     marriageBefore14,
-                    parentAges)
+                    parentAges,
+                    siblingAges)
 
 from GEDCOM import (Families, Individuals)
 
@@ -75,6 +76,11 @@ class TestForErrors(unittest.TestCase):
 
     def test_ParentAgeGap(self):
             res = parentAges()
+            print(res)
+            self.assertEqual(res, 0)
+
+    def test_SiblingAgeGap(self):
+            res = siblingAges()
             print(res)
             self.assertEqual(res, 0)
 
