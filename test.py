@@ -19,8 +19,9 @@ from GEDCOM import (allMalesinFamilyLastName, birthBeforeDeath, birthBeforeMarri
                     noMoreThan5Births,
                     polyMarriageCount,
                     marriageBefore14,
-                    Individuals,
-                    Families)
+                    parentAges)
+
+from GEDCOM import (Families, Individuals)
 
 from utils import thirty_day_difference, diff_month, is_not_none
 
@@ -71,6 +72,11 @@ class TestForErrors(unittest.TestCase):
         }
         res = uniqueNameAndBirthdays(dummy_data)
         self.assertEqual(res, 0)
+
+    def test_ParentAgeGap(self):
+            res = parentAges()
+            print(res)
+            self.assertEqual(res, 0)
 
     def test_check_corresponding_entries(self):
         self.assertTrue(checkCorrespondingEntries())
@@ -151,12 +157,12 @@ class TestForErrors(unittest.TestCase):
         Families['@F236@'] = fam
         self.assertEqual(polyMarriageCount(), 2)
         del Families['@F235@']
-        del Famalies['@F236@']
+        del Families['@F236@']
 
     def test_Less_than_150_years(self):
         self.assertEqual(is_less_than_150_years(), 0)
 
-    def test_Less_than_150_years(self):
+    def test_Less_than_150_years2(self):
         self.assertEqual(validate_life_events(), 0)
 
     def test_is_not_none(self):
@@ -165,7 +171,7 @@ class TestForErrors(unittest.TestCase):
     def maleLastNames(self):
         self.assertEqual(allMalesinFamilyLastName(), 0)
 
-    def test_is_not_none(self):
+    def test_is_not_none2(self):
         self.assertEqual(is_not_none("Not_N/A"), True)
 
     def test_birthBeforeDeathOfParents(self):
