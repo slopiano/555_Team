@@ -651,6 +651,24 @@ def parentAges():
     return 0
 
 
+def siblingAges():
+    for fam in Families.values():
+        childList = []
+        for child in fam.children:
+            childList.append(Individuals.get(child))
+            
+        for kid in childList:
+            kidbirth = parseDate(kid.birthday)
+            for each in childList:
+                if (kid != each):
+                    one_kid = parseDate(each.birthday)
+                    if ((diff_month(one_kid, kidbirth) < 8) 
+                    and (diff_month(one_kid,kidbirth) == 0 and abs(kidbirth.day - one_kid.day) >= 2)):
+                        print(f"siblings {each.name} and {kid.name} born too close")
+                        return -1
+    print("No births out of restrictions")
+    return 0
+
 
 
 def siblingMarriage():
@@ -766,6 +784,7 @@ def calculateErrors():
     divorceBeforeDeathOfSpouse()
     birthBeforeDeathOfParents()
     parentAges()
+    siblingAges()
 
 
 # Driver code
