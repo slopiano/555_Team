@@ -640,6 +640,18 @@ def birthOutOfWedlock():
                 count += 1
     return count
 
+def parentAges():
+    for fam in Families.values():
+        motherBirth = parseDate(Individuals.get(fam.wife_id).birthday)
+        fatherBirth = parseDate(Individuals.get(fam.husband_id).birthday)
+        for child in fam.children:
+            kidBirth = parseDate(Individuals.get(child).birthday)
+            if ((diff_month(kidBirth,fatherBirth) > 960) or (diff_month(kidBirth,motherBirth) > 720)):
+                return -1
+    return 0
+
+
+
 
 def siblingMarriage():
     count = 0
@@ -753,6 +765,7 @@ def calculateErrors():
     allMalesinFamilyLastName()
     divorceBeforeDeathOfSpouse()
     birthBeforeDeathOfParents()
+    parentAges()
 
 
 # Driver code
